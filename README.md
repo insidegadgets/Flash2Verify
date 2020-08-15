@@ -6,4 +6,14 @@ Supported chips:
 AM29F016B
 
 
-Licensed under GPL.
+**Built (old PCB revision)**
+
+![Built](https://github.com/insidegadgets/Flash2Verify/blob/master/Pictures/Flash2Verify_Built.jpg)
+
+**PCB Option 1**
+
+![PCB 1](https://github.com/insidegadgets/Flash2Verify/blob/master/Pictures/Flash2Verify_PCB_Option_1.png)
+
+**PCB Option 2**
+
+![PCB 2](https://github.com/insidegadgets/Flash2Verify/blob/master/Pictures/Flash2Verify_PCB_Option_2.png)
