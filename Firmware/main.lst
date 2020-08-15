@@ -1,0 +1,2137 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               	.global	USART_Receive
+  12               	USART_Receive:
+  13               	.LFB12:
+  14               		.file 1 "setup.c"
+   1:setup.c       **** /*
+   2:setup.c       ****  Flash2Verify
+   3:setup.c       ****  PCB version: 1.0
+   4:setup.c       ****  Firmware version: R1
+   5:setup.c       ****  Author: Alex from insideGadgets (www.insidegadgets.com)
+   6:setup.c       ****  Created: 13/08/2020
+   7:setup.c       ****  Last Modified: 15/08/2020
+   8:setup.c       ****  
+   9:setup.c       ****  */
+  10:setup.c       ****  
+  11:setup.c       **** #ifndef cbi
+  12:setup.c       **** #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
+  13:setup.c       **** #endif
+  14:setup.c       **** #ifndef sbi
+  15:setup.c       **** #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+  16:setup.c       **** #endif
+  17:setup.c       **** 
+  18:setup.c       **** #ifndef NULL
+  19:setup.c       **** #define NULL ((void *)0)
+  20:setup.c       **** #endif
+  21:setup.c       **** 
+  22:setup.c       **** #define LOW 0
+  23:setup.c       **** #define HIGH 1
+  24:setup.c       **** #define false 0
+  25:setup.c       **** #define true 1
+  26:setup.c       **** 
+  27:setup.c       **** #define ACTIVITY_LED PD4
+  28:setup.c       **** 
+  29:setup.c       **** #define READ_FIRMWARE_VERSION 'V'
+  30:setup.c       **** #define TSOP_POWER_UP 'U'
+  31:setup.c       **** #define TSOP_POWER_DOWN 'D'
+  32:setup.c       **** #define FLASH_ID_555 'i'
+  33:setup.c       **** #define FLASH_ID_5555 'I'
+  34:setup.c       **** #define READ_64_BYTES 'R'
+  35:setup.c       **** #define WRITE_64_BYTES 'W'
+  36:setup.c       **** #define WRITE_DATA 'X'
+  37:setup.c       **** #define SET_ADDRESS 'A'
+  38:setup.c       **** #define SEND_ACK '1'
+  39:setup.c       **** 
+  40:setup.c       **** #define AM29F016B_A0 PC3 // 30
+  41:setup.c       **** #define AM29F016B_A1 PC7 // 29
+  42:setup.c       **** #define AM29F016B_A2 PA2 // 28
+  43:setup.c       **** #define AM29F016B_A3 PC4 // 27
+  44:setup.c       **** #define AM29F016B_A4 PE5 // 22
+  45:setup.c       **** #define AM29F016B_A5 PB7 // 21
+  46:setup.c       **** #define AM29F016B_A6 PB3 // 20
+  47:setup.c       **** #define AM29F016B_A7 PE4 // 19
+  48:setup.c       **** #define AM29F016B_A8 PG3 // 18
+  49:setup.c       **** #define AM29F016B_A9 PB4 // 17
+  50:setup.c       **** #define AM29F016B_A10 PE3 // 16
+  51:setup.c       **** #define AM29F016B_A11 PG4 // 15
+  52:setup.c       **** #define AM29F016B_A12 PF0 // 10
+  53:setup.c       **** #define AM29F016B_A13 PD1 // 9
+  54:setup.c       **** #define AM29F016B_A14 PB0 // 8
+  55:setup.c       **** #define AM29F016B_A15 PF1 // 7
+  56:setup.c       **** #define AM29F016B_A16 PD2 // 6
+  57:setup.c       **** #define AM29F016B_A17 PE7 // 5
+  58:setup.c       **** #define AM29F016B_A18 PF2 // 4
+  59:setup.c       **** #define AM29F016B_A19 PD3 // 3
+  60:setup.c       **** #define AM29F016B_A20 PF4 // 46
+  61:setup.c       **** 
+  62:setup.c       **** #define AM29F016B_D0 PA1 // 31
+  63:setup.c       **** #define AM29F016B_D1 PC6 // 32
+  64:setup.c       **** #define AM29F016B_D2 PC2 // 33
+  65:setup.c       **** #define AM29F016B_D3 PA0 // 34
+  66:setup.c       **** #define AM29F016B_D4 PA7 // 38
+  67:setup.c       **** #define AM29F016B_D5 PC0 // 39
+  68:setup.c       **** #define AM29F016B_D6 PF6 // 40
+  69:setup.c       **** #define AM29F016B_D7 PA6 // 41
+  70:setup.c       **** 
+  71:setup.c       **** #define AM29F016B_RD PF5 // 43
+  72:setup.c       **** #define AM29F016B_WE PA5 // 44
+  73:setup.c       **** #define AM29F016B_CE PB1 // 11
+  74:setup.c       **** 
+  75:setup.c       **** #define AM29F016B_RESET PB5 // 14
+  76:setup.c       **** #define AM29F016B_5V_1 PD0 // 12
+  77:setup.c       **** #define AM29F016B_5V_2 PF7 // 37
+  78:setup.c       **** #define AM29F016B_GND_1 PC1 // 36
+  79:setup.c       **** #define AM29F016B_GND_2 PC5 // 35
+  80:setup.c       **** 
+  81:setup.c       **** #define AM29F016B_wePin_high	PORTA |= (1<<AM29F016B_WE);
+  82:setup.c       **** #define AM29F016B_wePin_low	PORTA &= ~(1<<AM29F016B_WE);
+  83:setup.c       **** #define AM29F016B_rdPin_high	PORTF |= (1<<AM29F016B_RD);
+  84:setup.c       **** #define AM29F016B_rdPin_low	PORTF &= ~(1<<AM29F016B_RD);
+  85:setup.c       **** #define AM29F016B_cePin_high	PORTB |= (1<<AM29F016B_CE);
+  86:setup.c       **** #define AM29F016B_cePin_low	PORTB &= ~(1<<AM29F016B_CE);
+  87:setup.c       **** 
+  88:setup.c       **** char receivedBuffer[256];
+  89:setup.c       **** char receivedChar;
+  90:setup.c       **** 
+  91:setup.c       **** // Receive USART data
+  92:setup.c       **** uint8_t USART_Receive(void) {
+  15               		.loc 1 92 0
+  16               		.cfi_startproc
+  17               	/* prologue: function */
+  18               	/* frame size = 0 */
+  19               	/* stack size = 0 */
+  20               	.L__stack_usage = 0
+  21               	.L2:
+  93:setup.c       **** 	while ( !(UCSRA & (1<<RXC)) ); // Wait for data to be received
+  22               		.loc 1 93 0 discriminator 1
+  23 0000 8091 C000 		lds r24,192
+  24 0004 87FF      		sbrs r24,7
+  25 0006 00C0      		rjmp .L2
+  94:setup.c       **** 	return UDR; // Get and return received data from buffer
+  26               		.loc 1 94 0
+  27 0008 8091 C600 		lds r24,198
+  95:setup.c       **** }
+  28               		.loc 1 95 0
+  29 000c 0895      		ret
+  30               		.cfi_endproc
+  31               	.LFE12:
+  33               	.global	USART_Transmit
+  35               	USART_Transmit:
+  36               	.LFB13:
+  96:setup.c       **** 
+  97:setup.c       **** // Transmit USART data
+  98:setup.c       **** void USART_Transmit(unsigned char data) {
+  37               		.loc 1 98 0
+  38               		.cfi_startproc
+  39               	/* prologue: function */
+  40               	/* frame size = 0 */
+  41               	/* stack size = 0 */
+  42               	.L__stack_usage = 0
+  43               	.LVL0:
+  44               	.L6:
+  99:setup.c       **** 	while ( !( UCSRA & (1<<UDRE)) ); // Wait for empty transmit buffer
+  45               		.loc 1 99 0 discriminator 1
+  46 000e 9091 C000 		lds r25,192
+  47 0012 95FF      		sbrs r25,5
+  48 0014 00C0      		rjmp .L6
+ 100:setup.c       **** 	UDR = data;
+  49               		.loc 1 100 0
+  50 0016 8093 C600 		sts 198,r24
+  51 001a 0895      		ret
+  52               		.cfi_endproc
+  53               	.LFE13:
+  55               	.global	usart_read_bytes
+  57               	usart_read_bytes:
+  58               	.LFB14:
+ 101:setup.c       **** }
+ 102:setup.c       **** 
+ 103:setup.c       **** // Read 1-256 bytes from the USART 
+ 104:setup.c       **** void usart_read_bytes(int count) {
+  59               		.loc 1 104 0
+  60               		.cfi_startproc
+  61               	.LVL1:
+  62 001c 0F93      		push r16
+  63               	.LCFI0:
+  64               		.cfi_def_cfa_offset 3
+  65               		.cfi_offset 16, -2
+  66 001e 1F93      		push r17
+  67               	.LCFI1:
+  68               		.cfi_def_cfa_offset 4
+  69               		.cfi_offset 17, -3
+  70 0020 CF93      		push r28
+  71               	.LCFI2:
+  72               		.cfi_def_cfa_offset 5
+  73               		.cfi_offset 28, -4
+  74 0022 DF93      		push r29
+  75               	.LCFI3:
+  76               		.cfi_def_cfa_offset 6
+  77               		.cfi_offset 29, -5
+  78               	/* prologue: function */
+  79               	/* frame size = 0 */
+  80               	/* stack size = 4 */
+  81               	.L__stack_usage = 4
+  82 0024 8C01      		movw r16,r24
+  83               	.LVL2:
+  84               	.LBB16:
+ 105:setup.c       **** 	for (int x = 0; x < count; x++) {
+  85               		.loc 1 105 0
+  86 0026 C0E0      		ldi r28,lo8(receivedBuffer)
+  87 0028 D0E0      		ldi r29,hi8(receivedBuffer)
+  88               	.LVL3:
+  89               	.L10:
+  90               		.loc 1 105 0 is_stmt 0 discriminator 1
+  91 002a CE01      		movw r24,r28
+  92 002c 8050      		subi r24,lo8(receivedBuffer)
+  93 002e 9040      		sbci r25,hi8(receivedBuffer)
+  94               	.LVL4:
+  95 0030 8017      		cp r24,r16
+  96 0032 9107      		cpc r25,r17
+  97 0034 04F4      		brge .L12
+ 106:setup.c       **** 		receivedBuffer[x] = USART_Receive();
+  98               		.loc 1 106 0 is_stmt 1 discriminator 3
+  99 0036 0E94 0000 		call USART_Receive
+ 100               	.LVL5:
+ 101 003a 8993      		st Y+,r24
+ 102               	.LVL6:
+ 103 003c 00C0      		rjmp .L10
+ 104               	.LVL7:
+ 105               	.L12:
+ 106               	/* epilogue start */
+ 107               	.LBE16:
+ 107:setup.c       **** 	}
+ 108:setup.c       **** }
+ 108               		.loc 1 108 0
+ 109 003e DF91      		pop r29
+ 110 0040 CF91      		pop r28
+ 111 0042 1F91      		pop r17
+ 112 0044 0F91      		pop r16
+ 113               	.LVL8:
+ 114 0046 0895      		ret
+ 115               		.cfi_endproc
+ 116               	.LFE14:
+ 118               	.global	usart_read_chars
+ 120               	usart_read_chars:
+ 121               	.LFB15:
+ 109:setup.c       **** 
+ 110:setup.c       **** // Read the USART until a 0 (string terminator byte) is received
+ 111:setup.c       **** void usart_read_chars(void) {
+ 122               		.loc 1 111 0
+ 123               		.cfi_startproc
+ 124 0048 CF93      		push r28
+ 125               	.LCFI4:
+ 126               		.cfi_def_cfa_offset 3
+ 127               		.cfi_offset 28, -2
+ 128 004a DF93      		push r29
+ 129               	.LCFI5:
+ 130               		.cfi_def_cfa_offset 4
+ 131               		.cfi_offset 29, -3
+ 132               	/* prologue: function */
+ 133               	/* frame size = 0 */
+ 134               	/* stack size = 2 */
+ 135               	.L__stack_usage = 2
+ 136               	.LVL9:
+ 137 004c C0E0      		ldi r28,lo8(receivedBuffer)
+ 138 004e D0E0      		ldi r29,hi8(receivedBuffer)
+ 139               	.LVL10:
+ 140               	.L15:
+ 112:setup.c       **** 	int x = 0;
+ 113:setup.c       **** 	while (1) {
+ 114:setup.c       **** 		receivedBuffer[x] = USART_Receive();
+ 141               		.loc 1 114 0
+ 142 0050 0E94 0000 		call USART_Receive
+ 143               	.LVL11:
+ 144 0054 8993      		st Y+,r24
+ 145               	.LVL12:
+ 115:setup.c       **** 		if (receivedBuffer[x] == 0) {
+ 146               		.loc 1 115 0
+ 147 0056 8823      		tst r24
+ 148 0058 01F0      		breq .L13
+ 149               	.LVL13:
+ 116:setup.c       **** 			break;
+ 117:setup.c       **** 		}
+ 118:setup.c       **** 		x++;
+ 119:setup.c       **** 		if (x >= 10) {
+ 150               		.loc 1 119 0
+ 151 005a 80E0      		ldi r24,hi8(receivedBuffer+10)
+ 152 005c C030      		cpi r28,lo8(receivedBuffer+10)
+ 153 005e D807      		cpc r29,r24
+ 154 0060 01F4      		brne .L15
+ 155               	.LVL14:
+ 156               	.L13:
+ 157               	/* epilogue start */
+ 120:setup.c       **** 			break;
+ 121:setup.c       **** 		}
+ 122:setup.c       **** 	}
+ 123:setup.c       **** }
+ 158               		.loc 1 123 0
+ 159 0062 DF91      		pop r29
+ 160 0064 CF91      		pop r28
+ 161 0066 0895      		ret
+ 162               		.cfi_endproc
+ 163               	.LFE15:
+ 165               	.global	AM29F016B_set_address
+ 167               	AM29F016B_set_address:
+ 168               	.LFB16:
+ 124:setup.c       **** 
+ 125:setup.c       **** void AM29F016B_set_address (uint32_t setAddress) {
+ 169               		.loc 1 125 0
+ 170               		.cfi_startproc
+ 171               	.LVL15:
+ 172               	/* prologue: function */
+ 173               	/* frame size = 0 */
+ 174               	/* stack size = 0 */
+ 175               	.L__stack_usage = 0
+ 126:setup.c       **** 	// All off
+ 127:setup.c       **** 	PORTG &= ~((1<<AM29F016B_A8) | (1<<AM29F016B_A11));
+ 176               		.loc 1 127 0
+ 177 0068 24B3      		in r18,0x14
+ 178 006a 277E      		andi r18,lo8(-25)
+ 179 006c 24BB      		out 0x14,r18
+ 128:setup.c       **** 	PORTF &= ~((1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20));
+ 180               		.loc 1 128 0
+ 181 006e 21B3      		in r18,0x11
+ 182 0070 287E      		andi r18,lo8(-24)
+ 183 0072 21BB      		out 0x11,r18
+ 129:setup.c       **** 	PORTE &= ~((1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17));
+ 184               		.loc 1 129 0
+ 185 0074 2EB1      		in r18,0xe
+ 186 0076 2774      		andi r18,lo8(71)
+ 187 0078 2EB9      		out 0xe,r18
+ 130:setup.c       **** 	PORTD &= ~((1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19));
+ 188               		.loc 1 130 0
+ 189 007a 2BB1      		in r18,0xb
+ 190 007c 217F      		andi r18,lo8(-15)
+ 191 007e 2BB9      		out 0xb,r18
+ 131:setup.c       **** 	PORTC &= ~((1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3));
+ 192               		.loc 1 131 0
+ 193 0080 28B1      		in r18,0x8
+ 194 0082 2776      		andi r18,lo8(103)
+ 195 0084 28B9      		out 0x8,r18
+ 132:setup.c       **** 	PORTB &= ~((1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14));
+ 196               		.loc 1 132 0
+ 197 0086 25B1      		in r18,0x5
+ 198 0088 2676      		andi r18,lo8(102)
+ 199 008a 25B9      		out 0x5,r18
+ 133:setup.c       **** 	PORTA &= ~((1<<AM29F016B_A2));
+ 200               		.loc 1 133 0
+ 201 008c 1298      		cbi 0x2,2
+ 134:setup.c       **** 	
+ 135:setup.c       **** 	// Set
+ 136:setup.c       **** 	if (setAddress & 0x01) {
+ 202               		.loc 1 136 0
+ 203 008e 60FD      		sbrc r22,0
+ 137:setup.c       **** 		PORTC |= (1<<AM29F016B_A0);
+ 204               		.loc 1 137 0
+ 205 0090 439A      		sbi 0x8,3
+ 206               	.L21:
+ 138:setup.c       **** 	}
+ 139:setup.c       **** 	if (setAddress & 0x02) {
+ 207               		.loc 1 139 0
+ 208 0092 61FD      		sbrc r22,1
+ 140:setup.c       **** 		PORTC |= (1<<AM29F016B_A1);
+ 209               		.loc 1 140 0
+ 210 0094 479A      		sbi 0x8,7
+ 211               	.L22:
+ 141:setup.c       **** 	}
+ 142:setup.c       **** 	if (setAddress & 0x04) {
+ 212               		.loc 1 142 0
+ 213 0096 62FD      		sbrc r22,2
+ 143:setup.c       **** 		PORTA |= (1<<AM29F016B_A2);
+ 214               		.loc 1 143 0
+ 215 0098 129A      		sbi 0x2,2
+ 216               	.L23:
+ 144:setup.c       **** 	}
+ 145:setup.c       **** 	if (setAddress & 0x08) {
+ 217               		.loc 1 145 0
+ 218 009a 63FD      		sbrc r22,3
+ 146:setup.c       **** 		PORTC |= (1<<AM29F016B_A3);
+ 219               		.loc 1 146 0
+ 220 009c 449A      		sbi 0x8,4
+ 221               	.L24:
+ 147:setup.c       **** 	}
+ 148:setup.c       **** 	if (setAddress & 0x010) {
+ 222               		.loc 1 148 0
+ 223 009e 64FD      		sbrc r22,4
+ 149:setup.c       **** 		PORTE |= (1<<AM29F016B_A4);
+ 224               		.loc 1 149 0
+ 225 00a0 759A      		sbi 0xe,5
+ 226               	.L25:
+ 150:setup.c       **** 	}
+ 151:setup.c       **** 	if (setAddress & 0x20) {
+ 227               		.loc 1 151 0
+ 228 00a2 65FD      		sbrc r22,5
+ 152:setup.c       **** 		PORTB |= (1<<AM29F016B_A5);
+ 229               		.loc 1 152 0
+ 230 00a4 2F9A      		sbi 0x5,7
+ 231               	.L26:
+ 153:setup.c       **** 	}
+ 154:setup.c       **** 	if (setAddress & 0x40) {
+ 232               		.loc 1 154 0
+ 233 00a6 66FD      		sbrc r22,6
+ 155:setup.c       **** 		PORTB |= (1<<AM29F016B_A6);
+ 234               		.loc 1 155 0
+ 235 00a8 2B9A      		sbi 0x5,3
+ 236               	.L27:
+ 156:setup.c       **** 	}
+ 157:setup.c       **** 	if (setAddress & 0x80) {
+ 237               		.loc 1 157 0
+ 238 00aa 67FD      		sbrc r22,7
+ 158:setup.c       **** 		PORTE |= (1<<AM29F016B_A7);
+ 239               		.loc 1 158 0
+ 240 00ac 749A      		sbi 0xe,4
+ 241               	.L28:
+ 159:setup.c       **** 	}
+ 160:setup.c       **** 	if (setAddress & 0x100) {
+ 242               		.loc 1 160 0
+ 243 00ae 70FD      		sbrc r23,0
+ 161:setup.c       **** 		PORTG |= (1<<AM29F016B_A8);
+ 244               		.loc 1 161 0
+ 245 00b0 A39A      		sbi 0x14,3
+ 246               	.L29:
+ 162:setup.c       **** 	}
+ 163:setup.c       **** 	if (setAddress & 0x200) {
+ 247               		.loc 1 163 0
+ 248 00b2 71FD      		sbrc r23,1
+ 164:setup.c       **** 		PORTB |= (1<<AM29F016B_A9);
+ 249               		.loc 1 164 0
+ 250 00b4 2C9A      		sbi 0x5,4
+ 251               	.L30:
+ 165:setup.c       **** 	}
+ 166:setup.c       **** 	if (setAddress & 0x400) {
+ 252               		.loc 1 166 0
+ 253 00b6 72FD      		sbrc r23,2
+ 167:setup.c       **** 		PORTE |= (1<<AM29F016B_A10);
+ 254               		.loc 1 167 0
+ 255 00b8 739A      		sbi 0xe,3
+ 256               	.L31:
+ 168:setup.c       **** 	}
+ 169:setup.c       **** 	if (setAddress & 0x800) {
+ 257               		.loc 1 169 0
+ 258 00ba 73FD      		sbrc r23,3
+ 170:setup.c       **** 		PORTG |= (1<<AM29F016B_A11);
+ 259               		.loc 1 170 0
+ 260 00bc A49A      		sbi 0x14,4
+ 261               	.L32:
+ 171:setup.c       **** 	}
+ 172:setup.c       **** 	if (setAddress & 0x1000) {
+ 262               		.loc 1 172 0
+ 263 00be 74FD      		sbrc r23,4
+ 173:setup.c       **** 		PORTF |= (1<<AM29F016B_A12);
+ 264               		.loc 1 173 0
+ 265 00c0 889A      		sbi 0x11,0
+ 266               	.L33:
+ 174:setup.c       **** 	}
+ 175:setup.c       **** 	if (setAddress & 0x2000) {
+ 267               		.loc 1 175 0
+ 268 00c2 75FD      		sbrc r23,5
+ 176:setup.c       **** 		PORTD |= (1<<AM29F016B_A13);
+ 269               		.loc 1 176 0
+ 270 00c4 599A      		sbi 0xb,1
+ 271               	.L34:
+ 177:setup.c       **** 	}
+ 178:setup.c       **** 	if (setAddress & 0x4000) {
+ 272               		.loc 1 178 0
+ 273 00c6 76FD      		sbrc r23,6
+ 179:setup.c       **** 		PORTB |= (1<<AM29F016B_A14);
+ 274               		.loc 1 179 0
+ 275 00c8 289A      		sbi 0x5,0
+ 276               	.L35:
+ 180:setup.c       **** 	}
+ 181:setup.c       **** 	if (setAddress & 0x8000) {
+ 277               		.loc 1 181 0
+ 278 00ca 77FD      		sbrc r23,7
+ 182:setup.c       **** 		PORTF |= (1<<AM29F016B_A15);
+ 279               		.loc 1 182 0
+ 280 00cc 899A      		sbi 0x11,1
+ 281               	.L36:
+ 183:setup.c       **** 	}
+ 184:setup.c       **** 	if (setAddress & 0x10000) {
+ 282               		.loc 1 184 0
+ 283 00ce 80FD      		sbrc r24,0
+ 185:setup.c       **** 		PORTD |= (1<<AM29F016B_A16);
+ 284               		.loc 1 185 0
+ 285 00d0 5A9A      		sbi 0xb,2
+ 286               	.L37:
+ 186:setup.c       **** 	}
+ 187:setup.c       **** 	if (setAddress & 0x20000) {
+ 287               		.loc 1 187 0
+ 288 00d2 81FD      		sbrc r24,1
+ 188:setup.c       **** 		PORTE |= (1<<AM29F016B_A17);
+ 289               		.loc 1 188 0
+ 290 00d4 779A      		sbi 0xe,7
+ 291               	.L38:
+ 189:setup.c       **** 	}
+ 190:setup.c       **** 	if (setAddress & 0x40000) {
+ 292               		.loc 1 190 0
+ 293 00d6 82FD      		sbrc r24,2
+ 191:setup.c       **** 		PORTF |= (1<<AM29F016B_A18);
+ 294               		.loc 1 191 0
+ 295 00d8 8A9A      		sbi 0x11,2
+ 296               	.L39:
+ 192:setup.c       **** 	}
+ 193:setup.c       **** 	if (setAddress & 0x80000) {
+ 297               		.loc 1 193 0
+ 298 00da 83FD      		sbrc r24,3
+ 194:setup.c       **** 		PORTD |= (1<<AM29F016B_A19);
+ 299               		.loc 1 194 0
+ 300 00dc 5B9A      		sbi 0xb,3
+ 301               	.L40:
+ 195:setup.c       **** 	}
+ 196:setup.c       **** 	if (setAddress & 0x100000) {
+ 302               		.loc 1 196 0
+ 303 00de 84FD      		sbrc r24,4
+ 197:setup.c       **** 		PORTF |= (1<<AM29F016B_A20);
+ 304               		.loc 1 197 0
+ 305 00e0 8C9A      		sbi 0x11,4
+ 306               	.L20:
+ 307 00e2 0895      		ret
+ 308               		.cfi_endproc
+ 309               	.LFE16:
+ 311               	.global	AM29F016B_set_data
+ 313               	AM29F016B_set_data:
+ 314               	.LFB17:
+ 198:setup.c       **** 	}
+ 199:setup.c       **** }
+ 200:setup.c       **** 
+ 201:setup.c       **** void AM29F016B_set_data (uint8_t data) {
+ 315               		.loc 1 201 0
+ 316               		.cfi_startproc
+ 317               	.LVL16:
+ 318               	/* prologue: function */
+ 319               	/* frame size = 0 */
+ 320               	/* stack size = 0 */
+ 321               	.L__stack_usage = 0
+ 202:setup.c       **** 	// All off
+ 203:setup.c       **** 	PORTF &= ~((1<<AM29F016B_D6));
+ 322               		.loc 1 203 0
+ 323 00e4 8E98      		cbi 0x11,6
+ 204:setup.c       **** 	PORTC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 324               		.loc 1 204 0
+ 325 00e6 98B1      		in r25,0x8
+ 326 00e8 9A7B      		andi r25,lo8(-70)
+ 327 00ea 98B9      		out 0x8,r25
+ 205:setup.c       **** 	PORTA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 328               		.loc 1 205 0
+ 329 00ec 92B1      		in r25,0x2
+ 330 00ee 9C73      		andi r25,lo8(60)
+ 331 00f0 92B9      		out 0x2,r25
+ 206:setup.c       **** 	
+ 207:setup.c       **** 	// Set
+ 208:setup.c       **** 	if (data & (1<<0)) {
+ 332               		.loc 1 208 0
+ 333 00f2 80FD      		sbrc r24,0
+ 209:setup.c       **** 		PORTA |= (1<<AM29F016B_D0);
+ 334               		.loc 1 209 0
+ 335 00f4 119A      		sbi 0x2,1
+ 336               	.L106:
+ 210:setup.c       **** 	}
+ 211:setup.c       **** 	if (data & (1<<1)) {
+ 337               		.loc 1 211 0
+ 338 00f6 81FD      		sbrc r24,1
+ 212:setup.c       **** 		PORTC |= (1<<AM29F016B_D1);
+ 339               		.loc 1 212 0
+ 340 00f8 469A      		sbi 0x8,6
+ 341               	.L107:
+ 213:setup.c       **** 	}
+ 214:setup.c       **** 	if (data & (1<<2)) {
+ 342               		.loc 1 214 0
+ 343 00fa 82FD      		sbrc r24,2
+ 215:setup.c       **** 		PORTC |= (1<<AM29F016B_D2);
+ 344               		.loc 1 215 0
+ 345 00fc 429A      		sbi 0x8,2
+ 346               	.L108:
+ 216:setup.c       **** 	}
+ 217:setup.c       **** 	if (data & (1<<3)) {
+ 347               		.loc 1 217 0
+ 348 00fe 83FD      		sbrc r24,3
+ 218:setup.c       **** 		PORTA |= (1<<AM29F016B_D3);
+ 349               		.loc 1 218 0
+ 350 0100 109A      		sbi 0x2,0
+ 351               	.L109:
+ 219:setup.c       **** 	}
+ 220:setup.c       **** 	if (data & (1<<4)) {
+ 352               		.loc 1 220 0
+ 353 0102 84FD      		sbrc r24,4
+ 221:setup.c       **** 		PORTA |= (1<<AM29F016B_D4);
+ 354               		.loc 1 221 0
+ 355 0104 179A      		sbi 0x2,7
+ 356               	.L110:
+ 222:setup.c       **** 	}
+ 223:setup.c       **** 	if (data & (1<<5)) {
+ 357               		.loc 1 223 0
+ 358 0106 85FD      		sbrc r24,5
+ 224:setup.c       **** 		PORTC |= (1<<AM29F016B_D5);
+ 359               		.loc 1 224 0
+ 360 0108 409A      		sbi 0x8,0
+ 361               	.L111:
+ 225:setup.c       **** 	}
+ 226:setup.c       **** 	if (data & (1<<6)) {
+ 362               		.loc 1 226 0
+ 363 010a 86FD      		sbrc r24,6
+ 227:setup.c       **** 		PORTF |= (1<<AM29F016B_D6);
+ 364               		.loc 1 227 0
+ 365 010c 8E9A      		sbi 0x11,6
+ 366               	.L112:
+ 228:setup.c       **** 	}
+ 229:setup.c       **** 	if (data & (1<<7)) {
+ 367               		.loc 1 229 0
+ 368 010e 87FD      		sbrc r24,7
+ 230:setup.c       **** 		PORTA |= (1<<AM29F016B_D7);
+ 369               		.loc 1 230 0
+ 370 0110 169A      		sbi 0x2,6
+ 371               	.L105:
+ 372 0112 0895      		ret
+ 373               		.cfi_endproc
+ 374               	.LFE17:
+ 376               	.global	AM29F016B_set_data_outputs
+ 378               	AM29F016B_set_data_outputs:
+ 379               	.LFB18:
+ 231:setup.c       **** 	}
+ 232:setup.c       **** }
+ 233:setup.c       **** 
+ 234:setup.c       **** void AM29F016B_set_data_outputs(void) {
+ 380               		.loc 1 234 0
+ 381               		.cfi_startproc
+ 382               	/* prologue: function */
+ 383               	/* frame size = 0 */
+ 384               	/* stack size = 0 */
+ 385               	.L__stack_usage = 0
+ 235:setup.c       **** 	DDRF |= (1<<AM29F016B_D6);
+ 386               		.loc 1 235 0
+ 387 0114 869A      		sbi 0x10,6
+ 236:setup.c       **** 	DDRC |= (1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1);
+ 388               		.loc 1 236 0
+ 389 0116 87B1      		in r24,0x7
+ 390 0118 8564      		ori r24,lo8(69)
+ 391 011a 87B9      		out 0x7,r24
+ 237:setup.c       **** 	DDRA |= (1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4);
+ 392               		.loc 1 237 0
+ 393 011c 81B1      		in r24,0x1
+ 394 011e 836C      		ori r24,lo8(-61)
+ 395 0120 81B9      		out 0x1,r24
+ 396 0122 0895      		ret
+ 397               		.cfi_endproc
+ 398               	.LFE18:
+ 400               	.global	AM29F016B_set_data_inputs
+ 402               	AM29F016B_set_data_inputs:
+ 403               	.LFB19:
+ 238:setup.c       **** }
+ 239:setup.c       **** 
+ 240:setup.c       **** void AM29F016B_set_data_inputs(void) {
+ 404               		.loc 1 240 0
+ 405               		.cfi_startproc
+ 406               	/* prologue: function */
+ 407               	/* frame size = 0 */
+ 408               	/* stack size = 0 */
+ 409               	.L__stack_usage = 0
+ 241:setup.c       **** 	PORTF &= ~((1<<AM29F016B_D6));
+ 410               		.loc 1 241 0
+ 411 0124 8E98      		cbi 0x11,6
+ 242:setup.c       **** 	PORTC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 412               		.loc 1 242 0
+ 413 0126 88B1      		in r24,0x8
+ 414 0128 8A7B      		andi r24,lo8(-70)
+ 415 012a 88B9      		out 0x8,r24
+ 243:setup.c       **** 	PORTA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 416               		.loc 1 243 0
+ 417 012c 82B1      		in r24,0x2
+ 418 012e 8C73      		andi r24,lo8(60)
+ 419 0130 82B9      		out 0x2,r24
+ 244:setup.c       **** 	DDRF &= ~((1<<AM29F016B_D6));
+ 420               		.loc 1 244 0
+ 421 0132 8698      		cbi 0x10,6
+ 245:setup.c       **** 	DDRC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 422               		.loc 1 245 0
+ 423 0134 87B1      		in r24,0x7
+ 424 0136 8A7B      		andi r24,lo8(-70)
+ 425 0138 87B9      		out 0x7,r24
+ 246:setup.c       **** 	DDRA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 426               		.loc 1 246 0
+ 427 013a 81B1      		in r24,0x1
+ 428 013c 8C73      		andi r24,lo8(60)
+ 429 013e 81B9      		out 0x1,r24
+ 430 0140 0895      		ret
+ 431               		.cfi_endproc
+ 432               	.LFE19:
+ 434               	.global	AM29F016B_read_data
+ 436               	AM29F016B_read_data:
+ 437               	.LFB20:
+ 247:setup.c       **** }
+ 248:setup.c       **** 
+ 249:setup.c       **** uint8_t AM29F016B_read_data(void) {
+ 438               		.loc 1 249 0
+ 439               		.cfi_startproc
+ 440               	/* prologue: function */
+ 441               	/* frame size = 0 */
+ 442               	/* stack size = 0 */
+ 443               	.L__stack_usage = 0
+ 444               	.LVL17:
+ 250:setup.c       **** 	uint8_t dataRead = 0;
+ 251:setup.c       **** 	
+ 252:setup.c       **** 	if (PINA & (1<<AM29F016B_D7)) {
+ 445               		.loc 1 252 0
+ 446 0142 069B      		sbis 0,6
+ 447 0144 00C0      		rjmp .L146
+ 253:setup.c       **** 		dataRead |= (1<<7);
+ 448               		.loc 1 253 0
+ 449 0146 80E8      		ldi r24,lo8(-128)
+ 450 0148 00C0      		rjmp .L138
+ 451               	.L146:
+ 250:setup.c       **** 	uint8_t dataRead = 0;
+ 452               		.loc 1 250 0
+ 453 014a 80E0      		ldi r24,0
+ 454               	.L138:
+ 455               	.LVL18:
+ 254:setup.c       **** 	}
+ 255:setup.c       **** 	if (PINF & (1<<AM29F016B_D6)) {
+ 456               		.loc 1 255 0
+ 457 014c 7E99      		sbic 0xf,6
+ 256:setup.c       **** 		dataRead |= (1<<6);
+ 458               		.loc 1 256 0
+ 459 014e 8064      		ori r24,lo8(64)
+ 460               	.LVL19:
+ 461               	.L139:
+ 257:setup.c       **** 	}
+ 258:setup.c       **** 	if (PINC & (1<<AM29F016B_D5)) {
+ 462               		.loc 1 258 0
+ 463 0150 3099      		sbic 0x6,0
+ 259:setup.c       **** 		dataRead |= (1<<5);
+ 464               		.loc 1 259 0
+ 465 0152 8062      		ori r24,lo8(32)
+ 466               	.LVL20:
+ 467               	.L140:
+ 260:setup.c       **** 	}
+ 261:setup.c       **** 	if (PINA & (1<<AM29F016B_D4)) {
+ 468               		.loc 1 261 0
+ 469 0154 0799      		sbic 0,7
+ 262:setup.c       **** 		dataRead |= (1<<4);
+ 470               		.loc 1 262 0
+ 471 0156 8061      		ori r24,lo8(16)
+ 472               	.LVL21:
+ 473               	.L141:
+ 263:setup.c       **** 	}
+ 264:setup.c       **** 	if (PINA & (1<<AM29F016B_D3)) {
+ 474               		.loc 1 264 0
+ 475 0158 0099      		sbic 0,0
+ 265:setup.c       **** 		dataRead |= (1<<3);
+ 476               		.loc 1 265 0
+ 477 015a 8860      		ori r24,lo8(8)
+ 478               	.LVL22:
+ 479               	.L142:
+ 266:setup.c       **** 	}
+ 267:setup.c       **** 	if (PINC & (1<<AM29F016B_D2)) {
+ 480               		.loc 1 267 0
+ 481 015c 3299      		sbic 0x6,2
+ 268:setup.c       **** 		dataRead |= (1<<2);
+ 482               		.loc 1 268 0
+ 483 015e 8460      		ori r24,lo8(4)
+ 484               	.LVL23:
+ 485               	.L143:
+ 269:setup.c       **** 	}
+ 270:setup.c       **** 	if (PINC & (1<<AM29F016B_D1)) {
+ 486               		.loc 1 270 0
+ 487 0160 3699      		sbic 0x6,6
+ 271:setup.c       **** 		dataRead |= (1<<1);
+ 488               		.loc 1 271 0
+ 489 0162 8260      		ori r24,lo8(2)
+ 490               	.LVL24:
+ 491               	.L144:
+ 272:setup.c       **** 	}
+ 273:setup.c       **** 	if (PINA & (1<<AM29F016B_D0)) {
+ 492               		.loc 1 273 0
+ 493 0164 0199      		sbic 0,1
+ 274:setup.c       **** 		dataRead |= (1<<0);
+ 494               		.loc 1 274 0
+ 495 0166 8160      		ori r24,lo8(1)
+ 496               	.LVL25:
+ 497               	.L145:
+ 275:setup.c       **** 	}
+ 276:setup.c       **** 	
+ 277:setup.c       **** 	return dataRead;
+ 278:setup.c       **** }
+ 498               		.loc 1 278 0
+ 499 0168 0895      		ret
+ 500               		.cfi_endproc
+ 501               	.LFE20:
+ 503               	.global	AM29F016B_write_address_with_data
+ 505               	AM29F016B_write_address_with_data:
+ 506               	.LFB21:
+ 279:setup.c       **** 
+ 280:setup.c       **** void AM29F016B_write_address_with_data(uint32_t writeAddress, uint8_t writeData) {
+ 507               		.loc 1 280 0
+ 508               		.cfi_startproc
+ 509               	.LVL26:
+ 510 016a CF93      		push r28
+ 511               	.LCFI6:
+ 512               		.cfi_def_cfa_offset 3
+ 513               		.cfi_offset 28, -2
+ 514               	/* prologue: function */
+ 515               	/* frame size = 0 */
+ 516               	/* stack size = 1 */
+ 517               	.L__stack_usage = 1
+ 518 016c C42F      		mov r28,r20
+ 281:setup.c       **** 	AM29F016B_set_address(writeAddress);
+ 519               		.loc 1 281 0
+ 520 016e 0E94 0000 		call AM29F016B_set_address
+ 521               	.LVL27:
+ 282:setup.c       **** 	AM29F016B_set_data(writeData);
+ 522               		.loc 1 282 0
+ 523 0172 8C2F      		mov r24,r28
+ 524 0174 0E94 0000 		call AM29F016B_set_data
+ 525               	.LVL28:
+ 283:setup.c       **** 	AM29F016B_cePin_low;
+ 526               		.loc 1 283 0
+ 527 0178 2998      		cbi 0x5,1
+ 284:setup.c       **** 	AM29F016B_wePin_low;
+ 528               		.loc 1 284 0
+ 529 017a 1598      		cbi 0x2,5
+ 285:setup.c       **** 	asm volatile("nop");
+ 530               		.loc 1 285 0
+ 531               	/* #APP */
+ 532               	 ;  285 "setup.c" 1
+ 533 017c 0000      		nop
+ 534               	 ;  0 "" 2
+ 286:setup.c       **** 	asm volatile("nop");
+ 535               		.loc 1 286 0
+ 536               	 ;  286 "setup.c" 1
+ 537 017e 0000      		nop
+ 538               	 ;  0 "" 2
+ 287:setup.c       **** 	AM29F016B_cePin_high;
+ 539               		.loc 1 287 0
+ 540               	/* #NOAPP */
+ 541 0180 299A      		sbi 0x5,1
+ 288:setup.c       **** 	AM29F016B_wePin_high;
+ 542               		.loc 1 288 0
+ 543 0182 159A      		sbi 0x2,5
+ 544               	/* epilogue start */
+ 289:setup.c       **** }
+ 545               		.loc 1 289 0
+ 546 0184 CF91      		pop r28
+ 547               	.LVL29:
+ 548 0186 0895      		ret
+ 549               		.cfi_endproc
+ 550               	.LFE21:
+ 552               	.global	AM29F016B_read_address
+ 554               	AM29F016B_read_address:
+ 555               	.LFB22:
+ 290:setup.c       **** 
+ 291:setup.c       **** uint8_t AM29F016B_read_address(uint32_t readAddress) {
+ 556               		.loc 1 291 0
+ 557               		.cfi_startproc
+ 558               	.LVL30:
+ 559               	/* prologue: function */
+ 560               	/* frame size = 0 */
+ 561               	/* stack size = 0 */
+ 562               	.L__stack_usage = 0
+ 292:setup.c       **** 	uint8_t data = 0;
+ 293:setup.c       **** 	
+ 294:setup.c       **** 	AM29F016B_set_address(readAddress);
+ 563               		.loc 1 294 0
+ 564 0188 0E94 0000 		call AM29F016B_set_address
+ 565               	.LVL31:
+ 295:setup.c       **** 	AM29F016B_cePin_low;
+ 566               		.loc 1 295 0
+ 567 018c 2998      		cbi 0x5,1
+ 296:setup.c       **** 	AM29F016B_rdPin_low;
+ 568               		.loc 1 296 0
+ 569 018e 8D98      		cbi 0x11,5
+ 297:setup.c       **** 	asm volatile("nop");
+ 570               		.loc 1 297 0
+ 571               	/* #APP */
+ 572               	 ;  297 "setup.c" 1
+ 573 0190 0000      		nop
+ 574               	 ;  0 "" 2
+ 298:setup.c       **** 	asm volatile("nop");
+ 575               		.loc 1 298 0
+ 576               	 ;  298 "setup.c" 1
+ 577 0192 0000      		nop
+ 578               	 ;  0 "" 2
+ 299:setup.c       **** 	data = AM29F016B_read_data();
+ 579               		.loc 1 299 0
+ 580               	/* #NOAPP */
+ 581 0194 0E94 0000 		call AM29F016B_read_data
+ 582               	.LVL32:
+ 300:setup.c       **** 	AM29F016B_cePin_high;
+ 583               		.loc 1 300 0
+ 584 0198 299A      		sbi 0x5,1
+ 301:setup.c       **** 	AM29F016B_rdPin_high;
+ 585               		.loc 1 301 0
+ 586 019a 8D9A      		sbi 0x11,5
+ 302:setup.c       **** 	
+ 303:setup.c       **** 	return data;
+ 304:setup.c       **** }
+ 587               		.loc 1 304 0
+ 588 019c 0895      		ret
+ 589               		.cfi_endproc
+ 590               	.LFE22:
+ 592               	.global	AM29F016B_read_address_fast
+ 594               	AM29F016B_read_address_fast:
+ 595               	.LFB23:
+ 305:setup.c       **** 
+ 306:setup.c       **** uint8_t AM29F016B_read_address_fast(void) {
+ 596               		.loc 1 306 0
+ 597               		.cfi_startproc
+ 598               	/* prologue: function */
+ 599               	/* frame size = 0 */
+ 600               	/* stack size = 0 */
+ 601               	.L__stack_usage = 0
+ 602               	.LVL33:
+ 307:setup.c       **** 	uint8_t data = 0;
+ 308:setup.c       **** 	
+ 309:setup.c       **** 	AM29F016B_cePin_low;
+ 603               		.loc 1 309 0
+ 604 019e 2998      		cbi 0x5,1
+ 310:setup.c       **** 	AM29F016B_rdPin_low;
+ 605               		.loc 1 310 0
+ 606 01a0 8D98      		cbi 0x11,5
+ 311:setup.c       **** 	asm volatile("nop");
+ 607               		.loc 1 311 0
+ 608               	/* #APP */
+ 609               	 ;  311 "setup.c" 1
+ 610 01a2 0000      		nop
+ 611               	 ;  0 "" 2
+ 312:setup.c       **** 	asm volatile("nop");
+ 612               		.loc 1 312 0
+ 613               	 ;  312 "setup.c" 1
+ 614 01a4 0000      		nop
+ 615               	 ;  0 "" 2
+ 313:setup.c       **** 	data = AM29F016B_read_data();
+ 616               		.loc 1 313 0
+ 617               	/* #NOAPP */
+ 618 01a6 0E94 0000 		call AM29F016B_read_data
+ 619               	.LVL34:
+ 314:setup.c       **** 	AM29F016B_cePin_high;
+ 620               		.loc 1 314 0
+ 621 01aa 299A      		sbi 0x5,1
+ 315:setup.c       **** 	AM29F016B_rdPin_high;
+ 622               		.loc 1 315 0
+ 623 01ac 8D9A      		sbi 0x11,5
+ 316:setup.c       **** 	
+ 317:setup.c       **** 	return data;
+ 318:setup.c       **** }
+ 624               		.loc 1 318 0
+ 625 01ae 0895      		ret
+ 626               		.cfi_endproc
+ 627               	.LFE23:
+ 629               	.global	AM29F016B_flash_write_cycle_555
+ 631               	AM29F016B_flash_write_cycle_555:
+ 632               	.LFB24:
+ 319:setup.c       **** 
+ 320:setup.c       **** void AM29F016B_flash_write_cycle_555(void) {
+ 633               		.loc 1 320 0
+ 634               		.cfi_startproc
+ 635               	/* prologue: function */
+ 636               	/* frame size = 0 */
+ 637               	/* stack size = 0 */
+ 638               	.L__stack_usage = 0
+ 321:setup.c       **** 	// 0x555
+ 322:setup.c       **** 	PORTG &= ~((1<<AM29F016B_A8) | (1<<AM29F016B_A11));
+ 639               		.loc 1 322 0
+ 640 01b0 84B3      		in r24,0x14
+ 641 01b2 877E      		andi r24,lo8(-25)
+ 642 01b4 84BB      		out 0x14,r24
+ 323:setup.c       **** 	PORTF &= ~((1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20));
+ 643               		.loc 1 323 0
+ 644 01b6 81B3      		in r24,0x11
+ 645 01b8 887E      		andi r24,lo8(-24)
+ 646 01ba 81BB      		out 0x11,r24
+ 324:setup.c       **** 	PORTE &= ~((1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17));
+ 647               		.loc 1 324 0
+ 648 01bc 8EB1      		in r24,0xe
+ 649 01be 8774      		andi r24,lo8(71)
+ 650 01c0 8EB9      		out 0xe,r24
+ 325:setup.c       **** 	PORTD &= ~((1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19));
+ 651               		.loc 1 325 0
+ 652 01c2 8BB1      		in r24,0xb
+ 653 01c4 817F      		andi r24,lo8(-15)
+ 654 01c6 8BB9      		out 0xb,r24
+ 326:setup.c       **** 	PORTC &= ~((1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3));
+ 655               		.loc 1 326 0
+ 656 01c8 88B1      		in r24,0x8
+ 657 01ca 8776      		andi r24,lo8(103)
+ 658 01cc 88B9      		out 0x8,r24
+ 327:setup.c       **** 	PORTB &= ~((1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14));
+ 659               		.loc 1 327 0
+ 660 01ce 85B1      		in r24,0x5
+ 661 01d0 8676      		andi r24,lo8(102)
+ 662 01d2 85B9      		out 0x5,r24
+ 328:setup.c       **** 	PORTA &= ~((1<<AM29F016B_A2));
+ 663               		.loc 1 328 0
+ 664 01d4 1298      		cbi 0x2,2
+ 329:setup.c       **** 	PORTC |= (1<<AM29F016B_A0);
+ 665               		.loc 1 329 0
+ 666 01d6 439A      		sbi 0x8,3
+ 330:setup.c       **** 	PORTA |= (1<<AM29F016B_A2);
+ 667               		.loc 1 330 0
+ 668 01d8 129A      		sbi 0x2,2
+ 331:setup.c       **** 	PORTE |= (1<<AM29F016B_A4);
+ 669               		.loc 1 331 0
+ 670 01da 759A      		sbi 0xe,5
+ 332:setup.c       **** 	PORTB |= (1<<AM29F016B_A6);
+ 671               		.loc 1 332 0
+ 672 01dc 2B9A      		sbi 0x5,3
+ 333:setup.c       **** 	PORTG |= (1<<AM29F016B_A8);
+ 673               		.loc 1 333 0
+ 674 01de A39A      		sbi 0x14,3
+ 334:setup.c       **** 	PORTE |= (1<<AM29F016B_A10);
+ 675               		.loc 1 334 0
+ 676 01e0 739A      		sbi 0xe,3
+ 335:setup.c       **** 	
+ 336:setup.c       **** 	// 0xAA
+ 337:setup.c       **** 	PORTF &= ~((1<<AM29F016B_D6));
+ 677               		.loc 1 337 0
+ 678 01e2 8E98      		cbi 0x11,6
+ 338:setup.c       **** 	PORTC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 679               		.loc 1 338 0
+ 680 01e4 88B1      		in r24,0x8
+ 681 01e6 8A7B      		andi r24,lo8(-70)
+ 682 01e8 88B9      		out 0x8,r24
+ 339:setup.c       **** 	PORTA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 683               		.loc 1 339 0
+ 684 01ea 82B1      		in r24,0x2
+ 685 01ec 8C73      		andi r24,lo8(60)
+ 686 01ee 82B9      		out 0x2,r24
+ 340:setup.c       **** 	PORTC |= (1<<AM29F016B_D1);
+ 687               		.loc 1 340 0
+ 688 01f0 469A      		sbi 0x8,6
+ 341:setup.c       **** 	PORTA |= (1<<AM29F016B_D3);
+ 689               		.loc 1 341 0
+ 690 01f2 109A      		sbi 0x2,0
+ 342:setup.c       **** 	PORTC |= (1<<AM29F016B_D5);
+ 691               		.loc 1 342 0
+ 692 01f4 409A      		sbi 0x8,0
+ 343:setup.c       **** 	PORTA |= (1<<AM29F016B_D7);
+ 693               		.loc 1 343 0
+ 694 01f6 169A      		sbi 0x2,6
+ 344:setup.c       **** 	
+ 345:setup.c       **** 	AM29F016B_cePin_low;
+ 695               		.loc 1 345 0
+ 696 01f8 2998      		cbi 0x5,1
+ 346:setup.c       **** 	AM29F016B_wePin_low;
+ 697               		.loc 1 346 0
+ 698 01fa 1598      		cbi 0x2,5
+ 347:setup.c       **** 	asm volatile("nop");
+ 699               		.loc 1 347 0
+ 700               	/* #APP */
+ 701               	 ;  347 "setup.c" 1
+ 702 01fc 0000      		nop
+ 703               	 ;  0 "" 2
+ 348:setup.c       **** 	asm volatile("nop");
+ 704               		.loc 1 348 0
+ 705               	 ;  348 "setup.c" 1
+ 706 01fe 0000      		nop
+ 707               	 ;  0 "" 2
+ 349:setup.c       **** 	AM29F016B_cePin_high;
+ 708               		.loc 1 349 0
+ 709               	/* #NOAPP */
+ 710 0200 299A      		sbi 0x5,1
+ 350:setup.c       **** 	AM29F016B_wePin_high;
+ 711               		.loc 1 350 0
+ 712 0202 159A      		sbi 0x2,5
+ 351:setup.c       **** 	
+ 352:setup.c       **** 	
+ 353:setup.c       **** 	// 0x2AA
+ 354:setup.c       **** 	PORTG &= ~((1<<AM29F016B_A8) | (1<<AM29F016B_A11));
+ 713               		.loc 1 354 0
+ 714 0204 84B3      		in r24,0x14
+ 715 0206 877E      		andi r24,lo8(-25)
+ 716 0208 84BB      		out 0x14,r24
+ 355:setup.c       **** 	PORTF &= ~((1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20));
+ 717               		.loc 1 355 0
+ 718 020a 81B3      		in r24,0x11
+ 719 020c 887E      		andi r24,lo8(-24)
+ 720 020e 81BB      		out 0x11,r24
+ 356:setup.c       **** 	PORTE &= ~((1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17));
+ 721               		.loc 1 356 0
+ 722 0210 8EB1      		in r24,0xe
+ 723 0212 8774      		andi r24,lo8(71)
+ 724 0214 8EB9      		out 0xe,r24
+ 357:setup.c       **** 	PORTD &= ~((1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19));
+ 725               		.loc 1 357 0
+ 726 0216 8BB1      		in r24,0xb
+ 727 0218 817F      		andi r24,lo8(-15)
+ 728 021a 8BB9      		out 0xb,r24
+ 358:setup.c       **** 	PORTC &= ~((1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3));
+ 729               		.loc 1 358 0
+ 730 021c 88B1      		in r24,0x8
+ 731 021e 8776      		andi r24,lo8(103)
+ 732 0220 88B9      		out 0x8,r24
+ 359:setup.c       **** 	PORTB &= ~((1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14));
+ 733               		.loc 1 359 0
+ 734 0222 85B1      		in r24,0x5
+ 735 0224 8676      		andi r24,lo8(102)
+ 736 0226 85B9      		out 0x5,r24
+ 360:setup.c       **** 	PORTA &= ~((1<<AM29F016B_A2));
+ 737               		.loc 1 360 0
+ 738 0228 1298      		cbi 0x2,2
+ 361:setup.c       **** 	PORTE |= (1<<AM29F016B_A7);
+ 739               		.loc 1 361 0
+ 740 022a 749A      		sbi 0xe,4
+ 362:setup.c       **** 	PORTC |= (1<<AM29F016B_A1) | (1<<AM29F016B_A3);
+ 741               		.loc 1 362 0
+ 742 022c 88B1      		in r24,0x8
+ 743 022e 8069      		ori r24,lo8(-112)
+ 744 0230 88B9      		out 0x8,r24
+ 363:setup.c       **** 	PORTB |= (1<<AM29F016B_A5) | (1<<AM29F016B_A9);
+ 745               		.loc 1 363 0
+ 746 0232 85B1      		in r24,0x5
+ 747 0234 8069      		ori r24,lo8(-112)
+ 748 0236 85B9      		out 0x5,r24
+ 364:setup.c       **** 	
+ 365:setup.c       **** 	// 0x55
+ 366:setup.c       **** 	PORTF &= ~((1<<AM29F016B_D6));
+ 749               		.loc 1 366 0
+ 750 0238 8E98      		cbi 0x11,6
+ 367:setup.c       **** 	PORTC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 751               		.loc 1 367 0
+ 752 023a 88B1      		in r24,0x8
+ 753 023c 8A7B      		andi r24,lo8(-70)
+ 754 023e 88B9      		out 0x8,r24
+ 368:setup.c       **** 	PORTA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 755               		.loc 1 368 0
+ 756 0240 82B1      		in r24,0x2
+ 757 0242 8C73      		andi r24,lo8(60)
+ 758 0244 82B9      		out 0x2,r24
+ 369:setup.c       **** 	PORTF |= (1<<AM29F016B_D6);
+ 759               		.loc 1 369 0
+ 760 0246 8E9A      		sbi 0x11,6
+ 370:setup.c       **** 	PORTC |= (1<<AM29F016B_D2);
+ 761               		.loc 1 370 0
+ 762 0248 429A      		sbi 0x8,2
+ 371:setup.c       **** 	PORTA |= (1<<AM29F016B_D0) | (1<<AM29F016B_D4);
+ 763               		.loc 1 371 0
+ 764 024a 82B1      		in r24,0x2
+ 765 024c 8268      		ori r24,lo8(-126)
+ 766 024e 82B9      		out 0x2,r24
+ 372:setup.c       **** 	
+ 373:setup.c       **** 	
+ 374:setup.c       **** 	AM29F016B_cePin_low;
+ 767               		.loc 1 374 0
+ 768 0250 2998      		cbi 0x5,1
+ 375:setup.c       **** 	AM29F016B_wePin_low;
+ 769               		.loc 1 375 0
+ 770 0252 1598      		cbi 0x2,5
+ 376:setup.c       **** 	asm volatile("nop");
+ 771               		.loc 1 376 0
+ 772               	/* #APP */
+ 773               	 ;  376 "setup.c" 1
+ 774 0254 0000      		nop
+ 775               	 ;  0 "" 2
+ 377:setup.c       **** 	asm volatile("nop");
+ 776               		.loc 1 377 0
+ 777               	 ;  377 "setup.c" 1
+ 778 0256 0000      		nop
+ 779               	 ;  0 "" 2
+ 378:setup.c       **** 	AM29F016B_cePin_high;
+ 780               		.loc 1 378 0
+ 781               	/* #NOAPP */
+ 782 0258 299A      		sbi 0x5,1
+ 379:setup.c       **** 	AM29F016B_wePin_high;
+ 783               		.loc 1 379 0
+ 784 025a 159A      		sbi 0x2,5
+ 380:setup.c       **** 	
+ 381:setup.c       **** 	
+ 382:setup.c       **** 	// 0x555
+ 383:setup.c       **** 	PORTG &= ~((1<<AM29F016B_A8) | (1<<AM29F016B_A11));
+ 785               		.loc 1 383 0
+ 786 025c 84B3      		in r24,0x14
+ 787 025e 877E      		andi r24,lo8(-25)
+ 788 0260 84BB      		out 0x14,r24
+ 384:setup.c       **** 	PORTF &= ~((1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20));
+ 789               		.loc 1 384 0
+ 790 0262 81B3      		in r24,0x11
+ 791 0264 887E      		andi r24,lo8(-24)
+ 792 0266 81BB      		out 0x11,r24
+ 385:setup.c       **** 	PORTE &= ~((1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17));
+ 793               		.loc 1 385 0
+ 794 0268 8EB1      		in r24,0xe
+ 795 026a 8774      		andi r24,lo8(71)
+ 796 026c 8EB9      		out 0xe,r24
+ 386:setup.c       **** 	PORTD &= ~((1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19));
+ 797               		.loc 1 386 0
+ 798 026e 8BB1      		in r24,0xb
+ 799 0270 817F      		andi r24,lo8(-15)
+ 800 0272 8BB9      		out 0xb,r24
+ 387:setup.c       **** 	PORTC &= ~((1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3));
+ 801               		.loc 1 387 0
+ 802 0274 88B1      		in r24,0x8
+ 803 0276 8776      		andi r24,lo8(103)
+ 804 0278 88B9      		out 0x8,r24
+ 388:setup.c       **** 	PORTB &= ~((1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14));
+ 805               		.loc 1 388 0
+ 806 027a 85B1      		in r24,0x5
+ 807 027c 8676      		andi r24,lo8(102)
+ 808 027e 85B9      		out 0x5,r24
+ 389:setup.c       **** 	PORTA &= ~((1<<AM29F016B_A2));
+ 809               		.loc 1 389 0
+ 810 0280 1298      		cbi 0x2,2
+ 390:setup.c       **** 	PORTC |= (1<<AM29F016B_A0);
+ 811               		.loc 1 390 0
+ 812 0282 439A      		sbi 0x8,3
+ 391:setup.c       **** 	PORTA |= (1<<AM29F016B_A2);
+ 813               		.loc 1 391 0
+ 814 0284 129A      		sbi 0x2,2
+ 392:setup.c       **** 	PORTE |= (1<<AM29F016B_A4);
+ 815               		.loc 1 392 0
+ 816 0286 759A      		sbi 0xe,5
+ 393:setup.c       **** 	PORTB |= (1<<AM29F016B_A6);
+ 817               		.loc 1 393 0
+ 818 0288 2B9A      		sbi 0x5,3
+ 394:setup.c       **** 	PORTG |= (1<<AM29F016B_A8);
+ 819               		.loc 1 394 0
+ 820 028a A39A      		sbi 0x14,3
+ 395:setup.c       **** 	PORTE |= (1<<AM29F016B_A10);
+ 821               		.loc 1 395 0
+ 822 028c 739A      		sbi 0xe,3
+ 396:setup.c       **** 	
+ 397:setup.c       **** 	// 0xA0
+ 398:setup.c       **** 	PORTF &= ~((1<<AM29F016B_D6));
+ 823               		.loc 1 398 0
+ 824 028e 8E98      		cbi 0x11,6
+ 399:setup.c       **** 	PORTC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 825               		.loc 1 399 0
+ 826 0290 88B1      		in r24,0x8
+ 827 0292 8A7B      		andi r24,lo8(-70)
+ 828 0294 88B9      		out 0x8,r24
+ 400:setup.c       **** 	PORTA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 829               		.loc 1 400 0
+ 830 0296 82B1      		in r24,0x2
+ 831 0298 8C73      		andi r24,lo8(60)
+ 832 029a 82B9      		out 0x2,r24
+ 401:setup.c       **** 	PORTC |= (1<<AM29F016B_D5);
+ 833               		.loc 1 401 0
+ 834 029c 409A      		sbi 0x8,0
+ 402:setup.c       **** 	PORTA |= (1<<AM29F016B_D7);
+ 835               		.loc 1 402 0
+ 836 029e 169A      		sbi 0x2,6
+ 403:setup.c       **** 	
+ 404:setup.c       **** 	AM29F016B_cePin_low;
+ 837               		.loc 1 404 0
+ 838 02a0 2998      		cbi 0x5,1
+ 405:setup.c       **** 	AM29F016B_wePin_low;
+ 839               		.loc 1 405 0
+ 840 02a2 1598      		cbi 0x2,5
+ 406:setup.c       **** 	asm volatile("nop");
+ 841               		.loc 1 406 0
+ 842               	/* #APP */
+ 843               	 ;  406 "setup.c" 1
+ 844 02a4 0000      		nop
+ 845               	 ;  0 "" 2
+ 407:setup.c       **** 	asm volatile("nop");
+ 846               		.loc 1 407 0
+ 847               	 ;  407 "setup.c" 1
+ 848 02a6 0000      		nop
+ 849               	 ;  0 "" 2
+ 408:setup.c       **** 	AM29F016B_cePin_high;
+ 850               		.loc 1 408 0
+ 851               	/* #NOAPP */
+ 852 02a8 299A      		sbi 0x5,1
+ 409:setup.c       **** 	AM29F016B_wePin_high;
+ 853               		.loc 1 409 0
+ 854 02aa 159A      		sbi 0x2,5
+ 855 02ac 0895      		ret
+ 856               		.cfi_endproc
+ 857               	.LFE24:
+ 859               	.global	setup
+ 861               	setup:
+ 862               	.LFB25:
+ 410:setup.c       **** 	
+ 411:setup.c       **** }
+ 412:setup.c       **** 
+ 413:setup.c       **** 
+ 414:setup.c       **** // Setup
+ 415:setup.c       **** void setup(void) {
+ 863               		.loc 1 415 0
+ 864               		.cfi_startproc
+ 865               	/* prologue: function */
+ 866               	/* frame size = 0 */
+ 867               	/* stack size = 0 */
+ 868               	.L__stack_usage = 0
+ 416:setup.c       **** 	// Light LED
+ 417:setup.c       **** 	DDRD |= (1<<ACTIVITY_LED);
+ 869               		.loc 1 417 0
+ 870 02ae 549A      		sbi 0xa,4
+ 418:setup.c       **** 	PORTD |= (1<<ACTIVITY_LED);
+ 871               		.loc 1 418 0
+ 872 02b0 5C9A      		sbi 0xb,4
+ 873               	.LVL35:
+ 874               	.LBB17:
+ 875               	.LBB18:
+ 876               		.file 2 "c:\\winavr-20100110\\avr\\include\\util\\delay.h"
+   1:c:\winavr-20100110\avr\include\util\delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:c:\winavr-20100110\avr\include\util\delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:c:\winavr-20100110\avr\include\util\delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:c:\winavr-20100110\avr\include\util\delay.h ****    All rights reserved.
+   5:c:\winavr-20100110\avr\include\util\delay.h **** 
+   6:c:\winavr-20100110\avr\include\util\delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:c:\winavr-20100110\avr\include\util\delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:c:\winavr-20100110\avr\include\util\delay.h **** 
+   9:c:\winavr-20100110\avr\include\util\delay.h ****    * Redistributions of source code must retain the above copyright
+  10:c:\winavr-20100110\avr\include\util\delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:c:\winavr-20100110\avr\include\util\delay.h **** 
+  12:c:\winavr-20100110\avr\include\util\delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:c:\winavr-20100110\avr\include\util\delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:c:\winavr-20100110\avr\include\util\delay.h ****      the documentation and/or other materials provided with the
+  15:c:\winavr-20100110\avr\include\util\delay.h ****      distribution.
+  16:c:\winavr-20100110\avr\include\util\delay.h **** 
+  17:c:\winavr-20100110\avr\include\util\delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:c:\winavr-20100110\avr\include\util\delay.h ****      contributors may be used to endorse or promote products derived
+  19:c:\winavr-20100110\avr\include\util\delay.h ****      from this software without specific prior written permission.
+  20:c:\winavr-20100110\avr\include\util\delay.h **** 
+  21:c:\winavr-20100110\avr\include\util\delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:c:\winavr-20100110\avr\include\util\delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:c:\winavr-20100110\avr\include\util\delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:c:\winavr-20100110\avr\include\util\delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:c:\winavr-20100110\avr\include\util\delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:c:\winavr-20100110\avr\include\util\delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:c:\winavr-20100110\avr\include\util\delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:c:\winavr-20100110\avr\include\util\delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:c:\winavr-20100110\avr\include\util\delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:c:\winavr-20100110\avr\include\util\delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:c:\winavr-20100110\avr\include\util\delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:c:\winavr-20100110\avr\include\util\delay.h **** 
+  33:c:\winavr-20100110\avr\include\util\delay.h **** /* $Id$ */
+  34:c:\winavr-20100110\avr\include\util\delay.h **** 
+  35:c:\winavr-20100110\avr\include\util\delay.h **** #ifndef _UTIL_DELAY_H_
+  36:c:\winavr-20100110\avr\include\util\delay.h **** #define _UTIL_DELAY_H_ 1
+  37:c:\winavr-20100110\avr\include\util\delay.h **** 
+  38:c:\winavr-20100110\avr\include\util\delay.h **** #ifndef __DOXYGEN__
+  39:c:\winavr-20100110\avr\include\util\delay.h **** #  ifndef __HAS_DELAY_CYCLES
+  40:c:\winavr-20100110\avr\include\util\delay.h **** #    define __HAS_DELAY_CYCLES 1
+  41:c:\winavr-20100110\avr\include\util\delay.h **** #  endif
+  42:c:\winavr-20100110\avr\include\util\delay.h **** #endif  /* __DOXYGEN__ */
+  43:c:\winavr-20100110\avr\include\util\delay.h **** 
+  44:c:\winavr-20100110\avr\include\util\delay.h **** #include <inttypes.h>
+  45:c:\winavr-20100110\avr\include\util\delay.h **** #include <util/delay_basic.h>
+  46:c:\winavr-20100110\avr\include\util\delay.h **** #include <math.h>
+  47:c:\winavr-20100110\avr\include\util\delay.h **** 
+  48:c:\winavr-20100110\avr\include\util\delay.h **** /** \file */
+  49:c:\winavr-20100110\avr\include\util\delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  50:c:\winavr-20100110\avr\include\util\delay.h ****     \code
+  51:c:\winavr-20100110\avr\include\util\delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  52:c:\winavr-20100110\avr\include\util\delay.h ****     //#define F_CPU 14.7456E6
+  53:c:\winavr-20100110\avr\include\util\delay.h ****     #include <util/delay.h>
+  54:c:\winavr-20100110\avr\include\util\delay.h ****     \endcode
+  55:c:\winavr-20100110\avr\include\util\delay.h **** 
+  56:c:\winavr-20100110\avr\include\util\delay.h ****     \note As an alternative method, it is possible to pass the
+  57:c:\winavr-20100110\avr\include\util\delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  58:c:\winavr-20100110\avr\include\util\delay.h ****     Obviously, in that case, no \c \#define statement should be
+  59:c:\winavr-20100110\avr\include\util\delay.h ****     used.
+  60:c:\winavr-20100110\avr\include\util\delay.h **** 
+  61:c:\winavr-20100110\avr\include\util\delay.h ****     The functions in this header file are wrappers around the basic
+  62:c:\winavr-20100110\avr\include\util\delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  63:c:\winavr-20100110\avr\include\util\delay.h ****     convenience functions where actual time values can be specified
+  64:c:\winavr-20100110\avr\include\util\delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  65:c:\winavr-20100110\avr\include\util\delay.h ****     that compile-time constant expressions will be eliminated by
+  66:c:\winavr-20100110\avr\include\util\delay.h ****     compiler optimization so floating-point expressions can be used
+  67:c:\winavr-20100110\avr\include\util\delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  68:c:\winavr-20100110\avr\include\util\delay.h ****     frequency passed by the macro F_CPU.
+  69:c:\winavr-20100110\avr\include\util\delay.h **** 
+  70:c:\winavr-20100110\avr\include\util\delay.h ****     \note In order for these functions to work as intended, compiler
+  71:c:\winavr-20100110\avr\include\util\delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  72:c:\winavr-20100110\avr\include\util\delay.h ****     <em>must</em> be an expression that is a known constant at
+  73:c:\winavr-20100110\avr\include\util\delay.h ****     compile-time.  If these requirements are not met, the resulting
+  74:c:\winavr-20100110\avr\include\util\delay.h ****     delay will be much longer (and basically unpredictable), and
+  75:c:\winavr-20100110\avr\include\util\delay.h ****     applications that otherwise do not use floating-point calculations
+  76:c:\winavr-20100110\avr\include\util\delay.h ****     will experience severe code bloat by the floating-point library
+  77:c:\winavr-20100110\avr\include\util\delay.h ****     routines linked into the application.
+  78:c:\winavr-20100110\avr\include\util\delay.h **** 
+  79:c:\winavr-20100110\avr\include\util\delay.h ****     The functions available allow the specification of microsecond, and
+  80:c:\winavr-20100110\avr\include\util\delay.h ****     millisecond delays directly, using the application-supplied macro
+  81:c:\winavr-20100110\avr\include\util\delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  82:c:\winavr-20100110\avr\include\util\delay.h **** 
+  83:c:\winavr-20100110\avr\include\util\delay.h **** */
+  84:c:\winavr-20100110\avr\include\util\delay.h **** 
+  85:c:\winavr-20100110\avr\include\util\delay.h **** #if !defined(__DOXYGEN__)
+  86:c:\winavr-20100110\avr\include\util\delay.h **** static __inline__ void _delay_us(double __us) __attribute__((__always_inline__));
+  87:c:\winavr-20100110\avr\include\util\delay.h **** static __inline__ void _delay_ms(double __ms) __attribute__((__always_inline__));
+  88:c:\winavr-20100110\avr\include\util\delay.h **** #endif
+  89:c:\winavr-20100110\avr\include\util\delay.h **** 
+  90:c:\winavr-20100110\avr\include\util\delay.h **** #ifndef F_CPU
+  91:c:\winavr-20100110\avr\include\util\delay.h **** /* prevent compiler error by supplying a default */
+  92:c:\winavr-20100110\avr\include\util\delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  93:c:\winavr-20100110\avr\include\util\delay.h **** /** \ingroup util_delay
+  94:c:\winavr-20100110\avr\include\util\delay.h ****     \def F_CPU
+  95:c:\winavr-20100110\avr\include\util\delay.h ****     \brief CPU frequency in Hz
+  96:c:\winavr-20100110\avr\include\util\delay.h **** 
+  97:c:\winavr-20100110\avr\include\util\delay.h ****     The macro F_CPU specifies the CPU frequency to be considered by
+  98:c:\winavr-20100110\avr\include\util\delay.h ****     the delay macros.  This macro is normally supplied by the
+  99:c:\winavr-20100110\avr\include\util\delay.h ****     environment (e.g. from within a project header, or the project's
+ 100:c:\winavr-20100110\avr\include\util\delay.h ****     Makefile).  The value 1 MHz here is only provided as a "vanilla"
+ 101:c:\winavr-20100110\avr\include\util\delay.h ****     fallback if no such user-provided definition could be found.
+ 102:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 103:c:\winavr-20100110\avr\include\util\delay.h ****     In terms of the delay functions, the CPU frequency can be given as
+ 104:c:\winavr-20100110\avr\include\util\delay.h ****     a floating-point constant (e.g. 3.6864E6 for 3.6864 MHz).
+ 105:c:\winavr-20100110\avr\include\util\delay.h ****     However, the macros in <util/setbaud.h> require it to be an
+ 106:c:\winavr-20100110\avr\include\util\delay.h ****     integer value.
+ 107:c:\winavr-20100110\avr\include\util\delay.h ****  */
+ 108:c:\winavr-20100110\avr\include\util\delay.h **** # define F_CPU 1000000UL
+ 109:c:\winavr-20100110\avr\include\util\delay.h **** #endif
+ 110:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 111:c:\winavr-20100110\avr\include\util\delay.h **** #ifndef __OPTIMIZE__
+ 112:c:\winavr-20100110\avr\include\util\delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+ 113:c:\winavr-20100110\avr\include\util\delay.h **** #endif
+ 114:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 115:c:\winavr-20100110\avr\include\util\delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 116:c:\winavr-20100110\avr\include\util\delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 117:c:\winavr-20100110\avr\include\util\delay.h ****   __STDC_HOSTED__
+ 118:c:\winavr-20100110\avr\include\util\delay.h **** #  include <math.h>
+ 119:c:\winavr-20100110\avr\include\util\delay.h **** #endif
+ 120:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 121:c:\winavr-20100110\avr\include\util\delay.h **** /**
+ 122:c:\winavr-20100110\avr\include\util\delay.h ****    \ingroup util_delay
+ 123:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 124:c:\winavr-20100110\avr\include\util\delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 125:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 126:c:\winavr-20100110\avr\include\util\delay.h ****    The macro F_CPU is supposed to be defined to a
+ 127:c:\winavr-20100110\avr\include\util\delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 128:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 129:c:\winavr-20100110\avr\include\util\delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 130:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 131:c:\winavr-20100110\avr\include\util\delay.h ****    When the user request delay which exceed the maximum possible one,
+ 132:c:\winavr-20100110\avr\include\util\delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 133:c:\winavr-20100110\avr\include\util\delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 134:c:\winavr-20100110\avr\include\util\delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 135:c:\winavr-20100110\avr\include\util\delay.h ****    user will not be informed about decreased resolution.
+ 136:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 137:c:\winavr-20100110\avr\include\util\delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles()
+ 138:c:\winavr-20100110\avr\include\util\delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 139:c:\winavr-20100110\avr\include\util\delay.h ****    values greater than the maximal possible delay, overflows results in
+ 140:c:\winavr-20100110\avr\include\util\delay.h ****    no delay i.e., 0ms.
+ 141:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 142:c:\winavr-20100110\avr\include\util\delay.h ****    Conversion of \c __ms into clock cycles may not always result in
+ 143:c:\winavr-20100110\avr\include\util\delay.h ****    integer.  By default, the clock cycles rounded up to next
+ 144:c:\winavr-20100110\avr\include\util\delay.h ****    integer. This ensures that the user gets at least \c __ms
+ 145:c:\winavr-20100110\avr\include\util\delay.h ****    microseconds of delay.
+ 146:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 147:c:\winavr-20100110\avr\include\util\delay.h ****    Alternatively, by defining the macro \c __DELAY_ROUND_DOWN__, or
+ 148:c:\winavr-20100110\avr\include\util\delay.h ****    \c __DELAY_ROUND_CLOSEST__, before including this header file, the
+ 149:c:\winavr-20100110\avr\include\util\delay.h ****    algorithm can be made to round down, or round to closest integer,
+ 150:c:\winavr-20100110\avr\include\util\delay.h ****    respectively.
+ 151:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 152:c:\winavr-20100110\avr\include\util\delay.h ****    \note
+ 153:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 154:c:\winavr-20100110\avr\include\util\delay.h ****    The implementation of _delay_ms() based on
+ 155:c:\winavr-20100110\avr\include\util\delay.h ****    __builtin_avr_delay_cycles() is not backward compatible with older
+ 156:c:\winavr-20100110\avr\include\util\delay.h ****    implementations.  In order to get functionality backward compatible
+ 157:c:\winavr-20100110\avr\include\util\delay.h ****    with previous versions, the macro \c "__DELAY_BACKWARD_COMPATIBLE__"
+ 158:c:\winavr-20100110\avr\include\util\delay.h ****    must be defined before including this header file. Also, the
+ 159:c:\winavr-20100110\avr\include\util\delay.h ****    backward compatible algorithm will be chosen if the code is
+ 160:c:\winavr-20100110\avr\include\util\delay.h ****    compiled in a <em>freestanding environment</em> (GCC option
+ 161:c:\winavr-20100110\avr\include\util\delay.h ****    \c -ffreestanding), as the math functions required for rounding are
+ 162:c:\winavr-20100110\avr\include\util\delay.h ****    not available to the compiler then.
+ 163:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 164:c:\winavr-20100110\avr\include\util\delay.h ****  */
+ 165:c:\winavr-20100110\avr\include\util\delay.h **** void
+ 166:c:\winavr-20100110\avr\include\util\delay.h **** _delay_ms(double __ms)
+ 167:c:\winavr-20100110\avr\include\util\delay.h **** {
+ 168:c:\winavr-20100110\avr\include\util\delay.h **** 	double __tmp ;
+ 169:c:\winavr-20100110\avr\include\util\delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 170:c:\winavr-20100110\avr\include\util\delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 171:c:\winavr-20100110\avr\include\util\delay.h ****   __STDC_HOSTED__
+ 172:c:\winavr-20100110\avr\include\util\delay.h **** 	uint32_t __ticks_dc;
+ 173:c:\winavr-20100110\avr\include\util\delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 174:c:\winavr-20100110\avr\include\util\delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 175:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 176:c:\winavr-20100110\avr\include\util\delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 177:c:\winavr-20100110\avr\include\util\delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 178:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 179:c:\winavr-20100110\avr\include\util\delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 180:c:\winavr-20100110\avr\include\util\delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 181:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 182:c:\winavr-20100110\avr\include\util\delay.h **** 	#else
+ 183:c:\winavr-20100110\avr\include\util\delay.h **** 		//round up by default
+ 184:c:\winavr-20100110\avr\include\util\delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 185:c:\winavr-20100110\avr\include\util\delay.h **** 	#endif
+ 186:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 187:c:\winavr-20100110\avr\include\util\delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 877               		.loc 2 187 0
+ 878 02b2 2FEF      		ldi r18,lo8(1599999)
+ 879 02b4 89E6      		ldi r24,hi8(1599999)
+ 880 02b6 98E1      		ldi r25,hlo8(1599999)
+ 881 02b8 2150      	1:	subi r18,1
+ 882 02ba 8040      		sbci r24,0
+ 883 02bc 9040      		sbci r25,0
+ 884 02be 01F4      		brne 1b
+ 885 02c0 00C0      		rjmp .
+ 886 02c2 0000      		nop
+ 887               	.LVL36:
+ 888               	.LBE18:
+ 889               	.LBE17:
+ 419:setup.c       **** 	_delay_ms(500);
+ 420:setup.c       **** 	PORTD &= ~(1<<ACTIVITY_LED);
+ 890               		.loc 1 420 0
+ 891 02c4 5C98      		cbi 0xb,4
+ 892               	.LVL37:
+ 893               	.LBB19:
+ 894               	.LBB20:
+ 895               		.loc 2 187 0
+ 896 02c6 2FEF      		ldi r18,lo8(1599999)
+ 897 02c8 89E6      		ldi r24,hi8(1599999)
+ 898 02ca 98E1      		ldi r25,hlo8(1599999)
+ 899 02cc 2150      	1:	subi r18,1
+ 900 02ce 8040      		sbci r24,0
+ 901 02d0 9040      		sbci r25,0
+ 902 02d2 01F4      		brne 1b
+ 903 02d4 00C0      		rjmp .
+ 904 02d6 0000      		nop
+ 905               	.LVL38:
+ 906               	.LBE20:
+ 907               	.LBE19:
+ 421:setup.c       **** 	_delay_ms(500);
+ 422:setup.c       **** 	
+ 423:setup.c       **** 	// Setup USART
+ 424:setup.c       **** 	UBRRL = 0; // 1Mbps Baud rate
+ 908               		.loc 1 424 0
+ 909 02d8 1092 C400 		sts 196,__zero_reg__
+ 425:setup.c       **** 	sbi(UCSRB, RXEN); // Receiver enable
+ 910               		.loc 1 425 0
+ 911 02dc E1EC      		ldi r30,lo8(-63)
+ 912 02de F0E0      		ldi r31,0
+ 913 02e0 8081      		ld r24,Z
+ 914 02e2 8061      		ori r24,lo8(16)
+ 915 02e4 8083      		st Z,r24
+ 426:setup.c       **** 	sbi(UCSRB, TXEN); // Transmitter enable
+ 916               		.loc 1 426 0
+ 917 02e6 8081      		ld r24,Z
+ 918 02e8 8860      		ori r24,lo8(8)
+ 919 02ea 8083      		st Z,r24
+ 427:setup.c       **** 	
+ 428:setup.c       **** 	// Turn on interrupts
+ 429:setup.c       **** 	sei();
+ 920               		.loc 1 429 0
+ 921               	/* #APP */
+ 922               	 ;  429 "setup.c" 1
+ 923 02ec 7894      		sei
+ 924               	 ;  0 "" 2
+ 925               	/* #NOAPP */
+ 926 02ee 0895      		ret
+ 927               		.cfi_endproc
+ 928               	.LFE25:
+ 930               		.section	.text.startup,"ax",@progbits
+ 931               	.global	main
+ 933               	main:
+ 934               	.LFB26:
+ 935               		.file 3 "main.c"
+   1:main.c        **** /*
+   2:main.c        ****  Flash2Verify
+   3:main.c        ****  PCB version: 1.0
+   4:main.c        ****  Firmware version: R1
+   5:main.c        ****  Author: Alex from insideGadgets (www.insidegadgets.com)
+   6:main.c        ****  Created: 13/08/2020
+   7:main.c        ****  Last Modified: 15/08/2020
+   8:main.c        ****  
+   9:main.c        ****  Set fuse bits: External 16MHz crystal, divide clock by 8 is off, disable JTAG
+  10:main.c        ****  avrdude -p atmega169 -c usbasp -U lfuse:w:0xef:m -U hfuse:w:0x99:m
+  11:main.c        ****  
+  12:main.c        ****  */
+  13:main.c        **** 
+  14:main.c        **** #define F_CPU 16000000 // 16 MHz
+  15:main.c        **** 
+  16:main.c        **** #include <avr/io.h>
+  17:main.c        **** #include <avr/wdt.h>
+  18:main.c        **** #include <avr/eeprom.h>
+  19:main.c        **** #include <avr/interrupt.h>
+  20:main.c        **** #include <avr/sleep.h>
+  21:main.c        **** #include <util/delay.h>
+  22:main.c        **** #include <stdlib.h>
+  23:main.c        **** #include <string.h>
+  24:main.c        **** #include "setup.c" // See defines, variables, constants, functions here
+  25:main.c        **** 
+  26:main.c        **** #define FIRMWARE_VERSION 1
+  27:main.c        **** 
+  28:main.c        **** int main(void) {
+ 936               		.loc 3 28 0
+ 937               		.cfi_startproc
+ 938               	/* prologue: function */
+ 939               	/* frame size = 0 */
+ 940               	/* stack size = 0 */
+ 941               	.L__stack_usage = 0
+  29:main.c        **** 	setup();
+ 942               		.loc 3 29 0
+ 943 0000 0E94 0000 		call setup
+ 944               	.LVL39:
+  30:main.c        **** 	
+  31:main.c        **** 	uint32_t address = 0;
+ 945               		.loc 3 31 0
+ 946 0004 C12C      		mov r12,__zero_reg__
+ 947 0006 D12C      		mov r13,__zero_reg__
+ 948 0008 7601      		movw r14,r12
+  32:main.c        **** 	
+  33:main.c        **** 	while(1) {
+  34:main.c        **** 		receivedChar = USART_Receive(); 
+  35:main.c        **** 		
+  36:main.c        **** 		if (receivedChar == TSOP_POWER_UP) {
+  37:main.c        **** 			// Set AM29F016B I/O
+  38:main.c        **** 			DDRG |= (1<<AM29F016B_A8) | (1<<AM29F016B_A11);
+  39:main.c        **** 			DDRF |= (1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20) | (1<<
+  40:main.c        **** 			DDRE |= (1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17);
+  41:main.c        **** 			DDRD |= (1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19) | (1<<AM29F016B_5V_1);
+  42:main.c        **** 			DDRC |= (1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3) | (1<<AM29F016B_GND_1) | (1<<A
+ 949               		.loc 3 42 0
+ 950 000a 0FEF      		ldi r16,lo8(-1)
+ 951               	.LVL40:
+ 952               	.L171:
+  34:main.c        **** 		
+ 953               		.loc 3 34 0
+ 954 000c 0E94 0000 		call USART_Receive
+ 955               	.LVL41:
+ 956 0010 8093 0000 		sts receivedChar,r24
+  36:main.c        **** 			// Set AM29F016B I/O
+ 957               		.loc 3 36 0
+ 958 0014 8535      		cpi r24,lo8(85)
+ 959 0016 01F4      		brne .L172
+  38:main.c        **** 			DDRF |= (1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20) | (1<<
+ 960               		.loc 3 38 0
+ 961 0018 83B3      		in r24,0x13
+ 962 001a 8861      		ori r24,lo8(24)
+ 963 001c 83BB      		out 0x13,r24
+  39:main.c        **** 			DDRE |= (1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17);
+ 964               		.loc 3 39 0
+ 965 001e 80B3      		in r24,0x10
+ 966 0020 876F      		ori r24,lo8(-9)
+ 967 0022 80BB      		out 0x10,r24
+  40:main.c        **** 			DDRD |= (1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19) | (1<<AM29F016B_5V_1);
+ 968               		.loc 3 40 0
+ 969 0024 8DB1      		in r24,0xd
+ 970 0026 886B      		ori r24,lo8(-72)
+ 971 0028 8DB9      		out 0xd,r24
+  41:main.c        **** 			DDRC |= (1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3) | (1<<AM29F016B_GND_1) | (1<<A
+ 972               		.loc 3 41 0
+ 973 002a 8AB1      		in r24,0xa
+ 974 002c 8F60      		ori r24,lo8(15)
+ 975 002e 8AB9      		out 0xa,r24
+ 976               		.loc 3 42 0
+ 977 0030 87B1      		in r24,0x7
+ 978 0032 07B9      		out 0x7,r16
+  43:main.c        **** 			DDRB |= (1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14) | (1<<AM2
+ 979               		.loc 3 43 0
+ 980 0034 84B1      		in r24,0x4
+ 981 0036 8B6B      		ori r24,lo8(-69)
+ 982 0038 84B9      		out 0x4,r24
+  44:main.c        **** 			DDRA |= (1<<AM29F016B_A2) | (1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29
+ 983               		.loc 3 44 0
+ 984 003a 81B1      		in r24,0x1
+ 985 003c 876E      		ori r24,lo8(-25)
+ 986 003e 81B9      		out 0x1,r24
+  45:main.c        **** 			
+  46:main.c        **** 			// Apply AM29F016B VCC/Reset
+  47:main.c        **** 			PORTD |= (1<<AM29F016B_5V_1);
+ 987               		.loc 3 47 0
+ 988 0040 589A      		sbi 0xb,0
+  48:main.c        **** 			PORTF |= (1<<AM29F016B_5V_2);
+ 989               		.loc 3 48 0
+ 990 0042 8F9A      		sbi 0x11,7
+  49:main.c        **** 			PORTB |= (1<<AM29F016B_RESET);
+ 991               		.loc 3 49 0
+ 992 0044 2D9A      		sbi 0x5,5
+  50:main.c        **** 			
+  51:main.c        **** 			// WR, RD, CS high
+  52:main.c        **** 			AM29F016B_wePin_high;
+ 993               		.loc 3 52 0
+ 994 0046 159A      		sbi 0x2,5
+  53:main.c        **** 			AM29F016B_rdPin_high;
+ 995               		.loc 3 53 0
+ 996 0048 8D9A      		sbi 0x11,5
+  54:main.c        **** 			AM29F016B_cePin_high;
+ 997               		.loc 3 54 0
+ 998 004a 299A      		sbi 0x5,1
+ 999 004c 00C0      		rjmp .L171
+ 1000               	.L172:
+  55:main.c        **** 		}
+  56:main.c        **** 		else if (receivedChar == TSOP_POWER_DOWN) {
+ 1001               		.loc 3 56 0
+ 1002 004e 8434      		cpi r24,lo8(68)
+ 1003 0050 01F4      		brne .L174
+  57:main.c        **** 			// Ground AM29F016B VCC/Reset
+  58:main.c        **** 			PORTB &= ~(1<<AM29F016B_RESET);
+ 1004               		.loc 3 58 0
+ 1005 0052 2D98      		cbi 0x5,5
+  59:main.c        **** 			PORTD &= ~(1<<AM29F016B_5V_1);
+ 1006               		.loc 3 59 0
+ 1007 0054 5898      		cbi 0xb,0
+  60:main.c        **** 			PORTF &= ~(1<<AM29F016B_5V_2);
+ 1008               		.loc 3 60 0
+ 1009 0056 8F98      		cbi 0x11,7
+  61:main.c        **** 			
+  62:main.c        **** 			// WR, RD, CS low
+  63:main.c        **** 			AM29F016B_wePin_low;
+ 1010               		.loc 3 63 0
+ 1011 0058 1598      		cbi 0x2,5
+  64:main.c        **** 			AM29F016B_rdPin_low;
+ 1012               		.loc 3 64 0
+ 1013 005a 8D98      		cbi 0x11,5
+  65:main.c        **** 			AM29F016B_cePin_low;
+ 1014               		.loc 3 65 0
+ 1015 005c 2998      		cbi 0x5,1
+ 1016               	.LVL42:
+ 1017               	.LBB21:
+ 1018               	.LBB22:
+ 1019               		.loc 2 187 0
+ 1020 005e 2FEF      		ldi r18,lo8(159999)
+ 1021 0060 80E7      		ldi r24,hi8(159999)
+ 1022 0062 92E0      		ldi r25,hlo8(159999)
+ 1023 0064 2150      	1:	subi r18,1
+ 1024 0066 8040      		sbci r24,0
+ 1025 0068 9040      		sbci r25,0
+ 1026 006a 01F4      		brne 1b
+ 1027 006c 00C0      		rjmp .
+ 1028 006e 0000      		nop
+ 1029               	.LVL43:
+ 1030               	.LBE22:
+ 1031               	.LBE21:
+  66:main.c        **** 			
+  67:main.c        **** 			_delay_ms(50);
+  68:main.c        **** 			
+  69:main.c        **** 			// Unset AM29F016B I/O
+  70:main.c        **** 			DDRG &= ((1<<AM29F016B_A8) | (1<<AM29F016B_A11));
+ 1032               		.loc 3 70 0
+ 1033 0070 83B3      		in r24,0x13
+ 1034 0072 8871      		andi r24,lo8(24)
+ 1035 0074 83BB      		out 0x13,r24
+  71:main.c        **** 			DDRF &= ((1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20) | (1<
+ 1036               		.loc 3 71 0
+ 1037 0076 8398      		cbi 0x10,3
+  72:main.c        **** 			DDRE &= ((1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17));
+ 1038               		.loc 3 72 0
+ 1039 0078 8DB1      		in r24,0xd
+ 1040 007a 887B      		andi r24,lo8(-72)
+ 1041 007c 8DB9      		out 0xd,r24
+  73:main.c        **** 			DDRD &= ((1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19) | (1<<AM29F016B_5V_1));
+ 1042               		.loc 3 73 0
+ 1043 007e 8AB1      		in r24,0xa
+ 1044 0080 8F70      		andi r24,lo8(15)
+ 1045 0082 8AB9      		out 0xa,r24
+  74:main.c        **** 			DDRC &= ((1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3) | (1<<AM29F016B_GND_1) | (1<<
+ 1046               		.loc 3 74 0
+ 1047 0084 87B1      		in r24,0x7
+ 1048 0086 87B9      		out 0x7,r24
+  75:main.c        **** 			DDRB &= ((1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14) | (1<<AM
+ 1049               		.loc 3 75 0
+ 1050 0088 84B1      		in r24,0x4
+ 1051 008a 8B7B      		andi r24,lo8(-69)
+ 1052 008c 84B9      		out 0x4,r24
+  76:main.c        **** 			DDRA &= ((1<<AM29F016B_A2) | (1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM2
+ 1053               		.loc 3 76 0
+ 1054 008e 81B1      		in r24,0x1
+ 1055 0090 877E      		andi r24,lo8(-25)
+ 1056 0092 81B9      		out 0x1,r24
+ 1057 0094 00C0      		rjmp .L171
+ 1058               	.L174:
+  77:main.c        **** 		}
+  78:main.c        **** 		else if (receivedChar == SET_ADDRESS) {
+ 1059               		.loc 3 78 0
+ 1060 0096 8134      		cpi r24,lo8(65)
+ 1061 0098 01F4      		brne .L175
+  79:main.c        **** 			usart_read_bytes(3);
+ 1062               		.loc 3 79 0
+ 1063 009a 83E0      		ldi r24,lo8(3)
+ 1064 009c 90E0      		ldi r25,0
+ 1065 009e 0E94 0000 		call usart_read_bytes
+ 1066               	.LVL44:
+  80:main.c        **** 			address = (uint32_t) ((uint32_t) receivedBuffer[2] << 16) | ((uint32_t) receivedBuffer[1] << 8) 
+ 1067               		.loc 3 80 0
+ 1068 00a2 8091 0000 		lds r24,receivedBuffer+2
+ 1069 00a6 C090 0000 		lds r12,receivedBuffer+1
+ 1070               	.LVL45:
+ 1071 00aa D12C      		mov r13,__zero_reg__
+ 1072 00ac E12C      		mov r14,__zero_reg__
+ 1073 00ae F12C      		mov r15,__zero_reg__
+ 1074 00b0 FE2C      		mov r15,r14
+ 1075 00b2 ED2C      		mov r14,r13
+ 1076 00b4 DC2C      		mov r13,r12
+ 1077 00b6 CC24      		clr r12
+ 1078 00b8 E82A      		or r14,r24
+ 1079 00ba 8091 0000 		lds r24,receivedBuffer
+ 1080 00be C82A      		or r12,r24
+ 1081               	.LVL46:
+  81:main.c        **** 			AM29F016B_set_address(address);
+ 1082               		.loc 3 81 0
+ 1083 00c0 C701      		movw r24,r14
+ 1084 00c2 B601      		movw r22,r12
+ 1085 00c4 0E94 0000 		call AM29F016B_set_address
+ 1086               	.LVL47:
+ 1087 00c8 00C0      		rjmp .L171
+ 1088               	.L175:
+  82:main.c        **** 		}
+  83:main.c        **** 		else if (receivedChar == READ_64_BYTES) {
+ 1089               		.loc 3 83 0
+ 1090 00ca 8235      		cpi r24,lo8(82)
+ 1091 00cc 01F4      		brne .L176
+  84:main.c        **** 			PORTD |= (1<<ACTIVITY_LED);
+ 1092               		.loc 3 84 0
+ 1093 00ce 5C9A      		sbi 0xb,4
+  85:main.c        **** 			AM29F016B_set_data_inputs();
+ 1094               		.loc 3 85 0
+ 1095 00d0 0E94 0000 		call AM29F016B_set_data_inputs
+ 1096               	.LVL48:
+ 1097 00d4 4601      		movw r8,r12
+ 1098 00d6 5701      		movw r10,r14
+ 1099 00d8 10E4      		ldi r17,lo8(64)
+ 1100               	.LVL49:
+ 1101               	.L177:
+ 1102               	.LBB23:
+  86:main.c        **** 			
+  87:main.c        **** 			for (uint8_t x = 0; x < 64; x++) {
+  88:main.c        **** 				USART_Transmit(AM29F016B_read_address(address));
+ 1103               		.loc 3 88 0 discriminator 3
+ 1104 00da C501      		movw r24,r10
+ 1105 00dc B401      		movw r22,r8
+ 1106 00de 0E94 0000 		call AM29F016B_read_address
+ 1107               	.LVL50:
+ 1108 00e2 0E94 0000 		call USART_Transmit
+ 1109               	.LVL51:
+  89:main.c        **** 				address++;
+ 1110               		.loc 3 89 0 discriminator 3
+ 1111 00e6 2FEF      		ldi r18,-1
+ 1112 00e8 821A      		sub r8,r18
+ 1113 00ea 920A      		sbc r9,r18
+ 1114 00ec A20A      		sbc r10,r18
+ 1115 00ee B20A      		sbc r11,r18
+ 1116               	.LVL52:
+ 1117 00f0 1150      		subi r17,lo8(-(-1))
+  87:main.c        **** 				USART_Transmit(AM29F016B_read_address(address));
+ 1118               		.loc 3 87 0 discriminator 3
+ 1119 00f2 01F4      		brne .L177
+ 1120 00f4 80E4      		ldi r24,64
+ 1121 00f6 C80E      		add r12,r24
+ 1122 00f8 D11C      		adc r13,__zero_reg__
+ 1123 00fa E11C      		adc r14,__zero_reg__
+ 1124 00fc F11C      		adc r15,__zero_reg__
+ 1125               	.LVL53:
+ 1126 00fe 00C0      		rjmp .L189
+ 1127               	.LVL54:
+ 1128               	.L176:
+ 1129               	.LBE23:
+  90:main.c        **** 			}
+  91:main.c        **** 			
+  92:main.c        **** 			PORTD &= ~(1<<ACTIVITY_LED);
+  93:main.c        **** 		}
+  94:main.c        **** 		else if (receivedChar == WRITE_64_BYTES) {
+ 1130               		.loc 3 94 0
+ 1131 0100 8735      		cpi r24,lo8(87)
+ 1132 0102 01F4      		brne .L178
+  95:main.c        **** 			usart_read_bytes(64);
+ 1133               		.loc 3 95 0
+ 1134 0104 80E4      		ldi r24,lo8(64)
+ 1135 0106 90E0      		ldi r25,0
+ 1136 0108 0E94 0000 		call usart_read_bytes
+ 1137               	.LVL55:
+  96:main.c        **** 			PORTD |= (1<<ACTIVITY_LED);
+ 1138               		.loc 3 96 0
+ 1139 010c 5C9A      		sbi 0xb,4
+ 1140               	.LVL56:
+ 1141 010e C0E0      		ldi r28,lo8(receivedBuffer)
+ 1142 0110 D0E0      		ldi r29,hi8(receivedBuffer)
+ 1143 0112 4601      		movw r8,r12
+ 1144 0114 5701      		movw r10,r14
+ 1145               	.LVL57:
+ 1146               	.L180:
+ 1147               	.LBB24:
+  97:main.c        **** 			
+  98:main.c        **** 			for (uint8_t x = 0; x < 64; x++) {
+  99:main.c        **** 				if (receivedBuffer[x] != 0xFF) {
+ 1148               		.loc 3 99 0
+ 1149 0116 8881      		ld r24,Y
+ 1150 0118 8F3F      		cpi r24,lo8(-1)
+ 1151 011a 01F4      		brne .L179
+ 1152               	.L184:
+ 100:main.c        **** 					AM29F016B_set_data_outputs();
+ 101:main.c        **** 					AM29F016B_flash_write_cycle_555();
+ 102:main.c        **** 					AM29F016B_write_address_with_data(address, receivedBuffer[x]);
+ 103:main.c        **** 					_delay_us(5); // Wait byte program time
+ 104:main.c        **** 					
+ 105:main.c        **** 					// Verify data
+ 106:main.c        **** 					AM29F016B_set_data_inputs();
+ 107:main.c        **** 					uint8_t dataVerify = AM29F016B_read_address_fast();
+ 108:main.c        **** 					while (receivedBuffer[x] != dataVerify) {
+ 109:main.c        **** 						dataVerify = AM29F016B_read_address_fast();
+ 110:main.c        **** 						_delay_us(1);
+ 111:main.c        **** 					}
+ 112:main.c        **** 				}
+ 113:main.c        **** 				address++;
+ 1153               		.loc 3 113 0
+ 1154 011c 9FEF      		ldi r25,-1
+ 1155 011e 891A      		sub r8,r25
+ 1156 0120 990A      		sbc r9,r25
+ 1157 0122 A90A      		sbc r10,r25
+ 1158 0124 B90A      		sbc r11,r25
+ 1159               	.LVL58:
+ 1160 0126 2196      		adiw r28,1
+ 1161               	.LVL59:
+  98:main.c        **** 				if (receivedBuffer[x] != 0xFF) {
+ 1162               		.loc 3 98 0
+ 1163 0128 20E0      		ldi r18,hi8(receivedBuffer+64)
+ 1164 012a C030      		cpi r28,lo8(receivedBuffer+64)
+ 1165 012c D207      		cpc r29,r18
+ 1166 012e 01F4      		brne .L180
+ 1167 0130 20E4      		ldi r18,64
+ 1168 0132 C20E      		add r12,r18
+ 1169 0134 D11C      		adc r13,__zero_reg__
+ 1170 0136 E11C      		adc r14,__zero_reg__
+ 1171 0138 F11C      		adc r15,__zero_reg__
+ 1172               	.LBE24:
+ 114:main.c        **** 			}
+ 115:main.c        **** 			
+ 116:main.c        **** 			USART_Transmit(SEND_ACK); // Send back ack
+ 1173               		.loc 3 116 0
+ 1174 013a 81E3      		ldi r24,lo8(49)
+ 1175 013c 0E94 0000 		call USART_Transmit
+ 1176               	.LVL60:
+ 1177 0140 00C0      		rjmp .L189
+ 1178               	.L179:
+ 1179               	.LBB30:
+ 1180               	.LBB25:
+ 100:main.c        **** 					AM29F016B_flash_write_cycle_555();
+ 1181               		.loc 3 100 0
+ 1182 0142 0E94 0000 		call AM29F016B_set_data_outputs
+ 1183               	.LVL61:
+ 101:main.c        **** 					AM29F016B_write_address_with_data(address, receivedBuffer[x]);
+ 1184               		.loc 3 101 0
+ 1185 0146 0E94 0000 		call AM29F016B_flash_write_cycle_555
+ 1186               	.LVL62:
+ 102:main.c        **** 					_delay_us(5); // Wait byte program time
+ 1187               		.loc 3 102 0
+ 1188 014a 4881      		ld r20,Y
+ 1189 014c C501      		movw r24,r10
+ 1190 014e B401      		movw r22,r8
+ 1191 0150 0E94 0000 		call AM29F016B_write_address_with_data
+ 1192               	.LVL63:
+ 1193               	.LBB26:
+ 1194               	.LBB27:
+ 188:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 189:c:\winavr-20100110\avr\include\util\delay.h **** #else
+ 190:c:\winavr-20100110\avr\include\util\delay.h **** 	uint16_t __ticks;
+ 191:c:\winavr-20100110\avr\include\util\delay.h **** 	__tmp = ((F_CPU) / 4e3) * __ms;
+ 192:c:\winavr-20100110\avr\include\util\delay.h **** 	if (__tmp < 1.0)
+ 193:c:\winavr-20100110\avr\include\util\delay.h **** 		__ticks = 1;
+ 194:c:\winavr-20100110\avr\include\util\delay.h **** 	else if (__tmp > 65535)
+ 195:c:\winavr-20100110\avr\include\util\delay.h **** 	{
+ 196:c:\winavr-20100110\avr\include\util\delay.h **** 		//	__ticks = requested delay in 1/10 ms
+ 197:c:\winavr-20100110\avr\include\util\delay.h **** 		__ticks = (uint16_t) (__ms * 10.0);
+ 198:c:\winavr-20100110\avr\include\util\delay.h **** 		while(__ticks)
+ 199:c:\winavr-20100110\avr\include\util\delay.h **** 		{
+ 200:c:\winavr-20100110\avr\include\util\delay.h **** 			// wait 1/10 ms
+ 201:c:\winavr-20100110\avr\include\util\delay.h **** 			_delay_loop_2(((F_CPU) / 4e3) / 10);
+ 202:c:\winavr-20100110\avr\include\util\delay.h **** 			__ticks --;
+ 203:c:\winavr-20100110\avr\include\util\delay.h **** 		}
+ 204:c:\winavr-20100110\avr\include\util\delay.h **** 		return;
+ 205:c:\winavr-20100110\avr\include\util\delay.h **** 	}
+ 206:c:\winavr-20100110\avr\include\util\delay.h **** 	else
+ 207:c:\winavr-20100110\avr\include\util\delay.h **** 		__ticks = (uint16_t)__tmp;
+ 208:c:\winavr-20100110\avr\include\util\delay.h **** 	_delay_loop_2(__ticks);
+ 209:c:\winavr-20100110\avr\include\util\delay.h **** #endif
+ 210:c:\winavr-20100110\avr\include\util\delay.h **** }
+ 211:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 212:c:\winavr-20100110\avr\include\util\delay.h **** /**
+ 213:c:\winavr-20100110\avr\include\util\delay.h ****    \ingroup util_delay
+ 214:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 215:c:\winavr-20100110\avr\include\util\delay.h ****    Perform a delay of \c __us microseconds, using _delay_loop_1().
+ 216:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 217:c:\winavr-20100110\avr\include\util\delay.h ****    The macro F_CPU is supposed to be defined to a
+ 218:c:\winavr-20100110\avr\include\util\delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 219:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 220:c:\winavr-20100110\avr\include\util\delay.h ****    The maximal possible delay is 768 us / F_CPU in MHz.
+ 221:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 222:c:\winavr-20100110\avr\include\util\delay.h ****    If the user requests a delay greater than the maximal possible one,
+ 223:c:\winavr-20100110\avr\include\util\delay.h ****    _delay_us() will automatically call _delay_ms() instead.  The user
+ 224:c:\winavr-20100110\avr\include\util\delay.h ****    will not be informed about this case.
+ 225:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 226:c:\winavr-20100110\avr\include\util\delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles()
+ 227:c:\winavr-20100110\avr\include\util\delay.h ****    support, maximal possible delay is 4294967.295 us/ F_CPU in MHz. For
+ 228:c:\winavr-20100110\avr\include\util\delay.h ****    values greater than the maximal possible delay, overflow results in
+ 229:c:\winavr-20100110\avr\include\util\delay.h ****    no delay i.e., 0us.
+ 230:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 231:c:\winavr-20100110\avr\include\util\delay.h ****    Conversion of \c __us into clock cycles may not always result in
+ 232:c:\winavr-20100110\avr\include\util\delay.h ****    integer.  By default, the clock cycles rounded up to next
+ 233:c:\winavr-20100110\avr\include\util\delay.h ****    integer. This ensures that the user gets at least \c __us
+ 234:c:\winavr-20100110\avr\include\util\delay.h ****    microseconds of delay.
+ 235:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 236:c:\winavr-20100110\avr\include\util\delay.h ****    Alternatively, by defining the macro \c __DELAY_ROUND_DOWN__, or
+ 237:c:\winavr-20100110\avr\include\util\delay.h ****    \c __DELAY_ROUND_CLOSEST__, before including this header file, the
+ 238:c:\winavr-20100110\avr\include\util\delay.h ****    algorithm can be made to round down, or round to closest integer,
+ 239:c:\winavr-20100110\avr\include\util\delay.h ****    respectively.
+ 240:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 241:c:\winavr-20100110\avr\include\util\delay.h ****    \note
+ 242:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 243:c:\winavr-20100110\avr\include\util\delay.h ****    The implementation of _delay_ms() based on
+ 244:c:\winavr-20100110\avr\include\util\delay.h ****    __builtin_avr_delay_cycles() is not backward compatible with older
+ 245:c:\winavr-20100110\avr\include\util\delay.h ****    implementations.  In order to get functionality backward compatible
+ 246:c:\winavr-20100110\avr\include\util\delay.h ****    with previous versions, the macro \c __DELAY_BACKWARD_COMPATIBLE__
+ 247:c:\winavr-20100110\avr\include\util\delay.h ****    must be defined before including this header file. Also, the
+ 248:c:\winavr-20100110\avr\include\util\delay.h ****    backward compatible algorithm will be chosen if the code is
+ 249:c:\winavr-20100110\avr\include\util\delay.h ****    compiled in a <em>freestanding environment</em> (GCC option
+ 250:c:\winavr-20100110\avr\include\util\delay.h ****    \c -ffreestanding), as the math functions required for rounding are
+ 251:c:\winavr-20100110\avr\include\util\delay.h ****    not available to the compiler then.
+ 252:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 253:c:\winavr-20100110\avr\include\util\delay.h ****  */
+ 254:c:\winavr-20100110\avr\include\util\delay.h **** void
+ 255:c:\winavr-20100110\avr\include\util\delay.h **** _delay_us(double __us)
+ 256:c:\winavr-20100110\avr\include\util\delay.h **** {
+ 257:c:\winavr-20100110\avr\include\util\delay.h **** 	double __tmp ;
+ 258:c:\winavr-20100110\avr\include\util\delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 259:c:\winavr-20100110\avr\include\util\delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 260:c:\winavr-20100110\avr\include\util\delay.h ****   __STDC_HOSTED__
+ 261:c:\winavr-20100110\avr\include\util\delay.h **** 	uint32_t __ticks_dc;
+ 262:c:\winavr-20100110\avr\include\util\delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 263:c:\winavr-20100110\avr\include\util\delay.h **** 	__tmp = ((F_CPU) / 1e6) * __us;
+ 264:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 265:c:\winavr-20100110\avr\include\util\delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 266:c:\winavr-20100110\avr\include\util\delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 267:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 268:c:\winavr-20100110\avr\include\util\delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 269:c:\winavr-20100110\avr\include\util\delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 270:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 271:c:\winavr-20100110\avr\include\util\delay.h **** 	#else
+ 272:c:\winavr-20100110\avr\include\util\delay.h **** 		//round up by default
+ 273:c:\winavr-20100110\avr\include\util\delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 274:c:\winavr-20100110\avr\include\util\delay.h **** 	#endif
+ 275:c:\winavr-20100110\avr\include\util\delay.h **** 
+ 276:c:\winavr-20100110\avr\include\util\delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 1195               		.loc 2 276 0
+ 1196 0154 8AE1      		ldi r24,lo8(26)
+ 1197 0156 8A95      	1:	dec r24
+ 1198 0158 01F4      		brne 1b
+ 1199 015a 00C0      		rjmp .
+ 1200               	.LVL64:
+ 1201               	.LBE27:
+ 1202               	.LBE26:
+ 106:main.c        **** 					uint8_t dataVerify = AM29F016B_read_address_fast();
+ 1203               		.loc 3 106 0
+ 1204 015c 0E94 0000 		call AM29F016B_set_data_inputs
+ 1205               	.LVL65:
+ 107:main.c        **** 					while (receivedBuffer[x] != dataVerify) {
+ 1206               		.loc 3 107 0
+ 1207 0160 0E94 0000 		call AM29F016B_read_address_fast
+ 1208               	.LVL66:
+ 1209               	.L182:
+ 108:main.c        **** 						dataVerify = AM29F016B_read_address_fast();
+ 1210               		.loc 3 108 0
+ 1211 0164 9881      		ld r25,Y
+ 1212 0166 8917      		cp r24,r25
+ 1213 0168 01F0      		breq .L184
+ 109:main.c        **** 						_delay_us(1);
+ 1214               		.loc 3 109 0
+ 1215 016a 0E94 0000 		call AM29F016B_read_address_fast
+ 1216               	.LVL67:
+ 1217               	.LBB28:
+ 1218               	.LBB29:
+ 1219               		.loc 2 276 0
+ 1220 016e 95E0      		ldi r25,lo8(5)
+ 1221 0170 9A95      	1:	dec r25
+ 1222 0172 01F4      		brne 1b
+ 1223 0174 0000      		nop
+ 1224 0176 00C0      		rjmp .L182
+ 1225               	.LVL68:
+ 1226               	.L189:
+ 1227               	.LBE29:
+ 1228               	.LBE28:
+ 1229               	.LBE25:
+ 1230               	.LBE30:
+ 117:main.c        **** 			PORTD &= ~(1<<ACTIVITY_LED);
+ 1231               		.loc 3 117 0
+ 1232 0178 5C98      		cbi 0xb,4
+ 1233 017a 00C0      		rjmp .L171
+ 1234               	.LVL69:
+ 1235               	.L178:
+ 118:main.c        **** 		}
+ 119:main.c        **** 		
+ 120:main.c        **** 		else if (receivedChar == WRITE_DATA) {
+ 1236               		.loc 3 120 0
+ 1237 017c 8835      		cpi r24,lo8(88)
+ 1238 017e 01F4      		brne .L185
+ 1239               	.LBB31:
+ 121:main.c        **** 			usart_read_bytes(4);
+ 1240               		.loc 3 121 0
+ 1241 0180 84E0      		ldi r24,lo8(4)
+ 1242 0182 90E0      		ldi r25,0
+ 1243 0184 0E94 0000 		call usart_read_bytes
+ 1244               	.LVL70:
+ 122:main.c        **** 			
+ 123:main.c        **** 			uint32_t receivedAddress = (uint32_t) ((uint32_t) receivedBuffer[2] << 16) | ((uint32_t) receive
+ 1245               		.loc 3 123 0
+ 1246 0188 8091 0000 		lds r24,receivedBuffer+2
+ 1247 018c 8090 0000 		lds r8,receivedBuffer+1
+ 1248 0190 912C      		mov r9,__zero_reg__
+ 1249 0192 A12C      		mov r10,__zero_reg__
+ 1250 0194 B12C      		mov r11,__zero_reg__
+ 1251 0196 BA2C      		mov r11,r10
+ 1252 0198 A92C      		mov r10,r9
+ 1253 019a 982C      		mov r9,r8
+ 1254 019c 8824      		clr r8
+ 1255 019e A82A      		or r10,r24
+ 1256 01a0 8091 0000 		lds r24,receivedBuffer
+ 1257 01a4 882A      		or r8,r24
+ 1258               	.LVL71:
+ 124:main.c        **** 			
+ 125:main.c        **** 			AM29F016B_set_data_outputs();
+ 1259               		.loc 3 125 0
+ 1260 01a6 0E94 0000 		call AM29F016B_set_data_outputs
+ 1261               	.LVL72:
+ 126:main.c        **** 			AM29F016B_write_address_with_data(receivedAddress, receivedBuffer[3]);
+ 1262               		.loc 3 126 0
+ 1263 01aa 4091 0000 		lds r20,receivedBuffer+3
+ 1264 01ae C501      		movw r24,r10
+ 1265 01b0 B401      		movw r22,r8
+ 1266 01b2 0E94 0000 		call AM29F016B_write_address_with_data
+ 1267               	.LVL73:
+ 1268               	.LBE31:
+ 1269 01b6 00C0      		rjmp .L171
+ 1270               	.LVL74:
+ 1271               	.L185:
+ 127:main.c        **** 		}
+ 128:main.c        **** 		
+ 129:main.c        **** 		// Send back the firmware version number
+ 130:main.c        **** 		else if (receivedChar == READ_FIRMWARE_VERSION) {
+ 1272               		.loc 3 130 0
+ 1273 01b8 8635      		cpi r24,lo8(86)
+ 1274 01ba 01F0      		breq .+2
+ 1275 01bc 00C0      		rjmp .L171
+ 131:main.c        **** 			USART_Transmit(FIRMWARE_VERSION);
+ 1276               		.loc 3 131 0
+ 1277 01be 81E0      		ldi r24,lo8(1)
+ 1278 01c0 0E94 0000 		call USART_Transmit
+ 1279               	.LVL75:
+ 1280 01c4 00C0      		rjmp .L171
+ 1281               		.cfi_endproc
+ 1282               	.LFE26:
+ 1284               		.comm	receivedChar,1,1
+ 1285               		.comm	receivedBuffer,256,1
+ 1286               		.text
+ 1287               	.Letext0:
+ 1288               		.file 4 "c:\\winavr-20100110\\avr\\include\\stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:2      *ABS*:0000003e __SP_H__
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:3      *ABS*:0000003d __SP_L__
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:4      *ABS*:0000003f __SREG__
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:5      *ABS*:00000000 __tmp_reg__
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:6      *ABS*:00000001 __zero_reg__
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:12     .text:00000000 USART_Receive
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:35     .text:0000000e USART_Transmit
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:57     .text:0000001c usart_read_bytes
+                            *COM*:00000100 receivedBuffer
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:120    .text:00000048 usart_read_chars
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:167    .text:00000068 AM29F016B_set_address
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:313    .text:000000e4 AM29F016B_set_data
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:378    .text:00000114 AM29F016B_set_data_outputs
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:402    .text:00000124 AM29F016B_set_data_inputs
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:436    .text:00000142 AM29F016B_read_data
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:505    .text:0000016a AM29F016B_write_address_with_data
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:554    .text:00000188 AM29F016B_read_address
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:594    .text:0000019e AM29F016B_read_address_fast
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:631    .text:000001b0 AM29F016B_flash_write_cycle_555
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:861    .text:000002ae setup
+C:\Users\Alex\AppData\Local\Temp\ccz4zged.s:933    .text.startup:00000000 main
+                            *COM*:00000001 receivedChar
+
+UNDEFINED SYMBOLS
+__do_clear_bss

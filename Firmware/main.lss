@@ -1,0 +1,1191 @@
+
+main.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800100  0000053e  000005d2  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         0000053e  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          00000101  00800100  00800100  000005d2  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  000005d2  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000604  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 00000028  00000000  00000000  00000640  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   000006e4  00000000  00000000  00000668  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 000002a8  00000000  00000000  00000d4c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   000007d2  00000000  00000000  00000ff4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  00000130  00000000  00000000  000017c8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    000002fe  00000000  00000000  000018f8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    00000513  00000000  00000000  00001bf6  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 00000030  00000000  00000000  00002109  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2e 00 	jmp	0x5c	; 0x5c <__ctors_end>
+   4:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+   8:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+   c:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  10:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  14:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  18:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  1c:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  20:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  24:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  28:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  2c:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  30:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  34:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  38:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  3c:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  40:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  44:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  48:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  4c:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  50:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  54:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+  58:	0c 94 40 00 	jmp	0x80	; 0x80 <__bad_interrupt>
+
+0000005c <__ctors_end>:
+  5c:	11 24       	eor	r1, r1
+  5e:	1f be       	out	0x3f, r1	; 63
+  60:	cf ef       	ldi	r28, 0xFF	; 255
+  62:	d4 e0       	ldi	r29, 0x04	; 4
+  64:	de bf       	out	0x3e, r29	; 62
+  66:	cd bf       	out	0x3d, r28	; 61
+
+00000068 <__do_clear_bss>:
+  68:	22 e0       	ldi	r18, 0x02	; 2
+  6a:	a0 e0       	ldi	r26, 0x00	; 0
+  6c:	b1 e0       	ldi	r27, 0x01	; 1
+  6e:	01 c0       	rjmp	.+2      	; 0x72 <.do_clear_bss_start>
+
+00000070 <.do_clear_bss_loop>:
+  70:	1d 92       	st	X+, r1
+
+00000072 <.do_clear_bss_start>:
+  72:	a1 30       	cpi	r26, 0x01	; 1
+  74:	b2 07       	cpc	r27, r18
+  76:	e1 f7       	brne	.-8      	; 0x70 <.do_clear_bss_loop>
+  78:	0e 94 ba 01 	call	0x374	; 0x374 <main>
+  7c:	0c 94 9d 02 	jmp	0x53a	; 0x53a <_exit>
+
+00000080 <__bad_interrupt>:
+  80:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+00000084 <USART_Receive>:
+char receivedBuffer[256];
+char receivedChar;
+
+// Receive USART data
+uint8_t USART_Receive(void) {
+	while ( !(UCSRA & (1<<RXC)) ); // Wait for data to be received
+  84:	80 91 c0 00 	lds	r24, 0x00C0	; 0x8000c0 <__TEXT_REGION_LENGTH__+0x7e00c0>
+  88:	87 ff       	sbrs	r24, 7
+  8a:	fc cf       	rjmp	.-8      	; 0x84 <USART_Receive>
+	return UDR; // Get and return received data from buffer
+  8c:	80 91 c6 00 	lds	r24, 0x00C6	; 0x8000c6 <__TEXT_REGION_LENGTH__+0x7e00c6>
+}
+  90:	08 95       	ret
+
+00000092 <USART_Transmit>:
+
+// Transmit USART data
+void USART_Transmit(unsigned char data) {
+	while ( !( UCSRA & (1<<UDRE)) ); // Wait for empty transmit buffer
+  92:	90 91 c0 00 	lds	r25, 0x00C0	; 0x8000c0 <__TEXT_REGION_LENGTH__+0x7e00c0>
+  96:	95 ff       	sbrs	r25, 5
+  98:	fc cf       	rjmp	.-8      	; 0x92 <USART_Transmit>
+	UDR = data;
+  9a:	80 93 c6 00 	sts	0x00C6, r24	; 0x8000c6 <__TEXT_REGION_LENGTH__+0x7e00c6>
+  9e:	08 95       	ret
+
+000000a0 <usart_read_bytes>:
+}
+
+// Read 1-256 bytes from the USART 
+void usart_read_bytes(int count) {
+  a0:	0f 93       	push	r16
+  a2:	1f 93       	push	r17
+  a4:	cf 93       	push	r28
+  a6:	df 93       	push	r29
+  a8:	8c 01       	movw	r16, r24
+	for (int x = 0; x < count; x++) {
+  aa:	c0 e0       	ldi	r28, 0x00	; 0
+  ac:	d1 e0       	ldi	r29, 0x01	; 1
+  ae:	ce 01       	movw	r24, r28
+  b0:	80 50       	subi	r24, 0x00	; 0
+  b2:	91 40       	sbci	r25, 0x01	; 1
+  b4:	80 17       	cp	r24, r16
+  b6:	91 07       	cpc	r25, r17
+  b8:	24 f4       	brge	.+8      	; 0xc2 <usart_read_bytes+0x22>
+		receivedBuffer[x] = USART_Receive();
+  ba:	0e 94 42 00 	call	0x84	; 0x84 <USART_Receive>
+  be:	89 93       	st	Y+, r24
+  c0:	f6 cf       	rjmp	.-20     	; 0xae <usart_read_bytes+0xe>
+	}
+}
+  c2:	df 91       	pop	r29
+  c4:	cf 91       	pop	r28
+  c6:	1f 91       	pop	r17
+  c8:	0f 91       	pop	r16
+  ca:	08 95       	ret
+
+000000cc <usart_read_chars>:
+
+// Read the USART until a 0 (string terminator byte) is received
+void usart_read_chars(void) {
+  cc:	cf 93       	push	r28
+  ce:	df 93       	push	r29
+  d0:	c0 e0       	ldi	r28, 0x00	; 0
+  d2:	d1 e0       	ldi	r29, 0x01	; 1
+	int x = 0;
+	while (1) {
+		receivedBuffer[x] = USART_Receive();
+  d4:	0e 94 42 00 	call	0x84	; 0x84 <USART_Receive>
+  d8:	89 93       	st	Y+, r24
+		if (receivedBuffer[x] == 0) {
+  da:	88 23       	and	r24, r24
+  dc:	21 f0       	breq	.+8      	; 0xe6 <usart_read_chars+0x1a>
+			break;
+		}
+		x++;
+		if (x >= 10) {
+  de:	81 e0       	ldi	r24, 0x01	; 1
+  e0:	ca 30       	cpi	r28, 0x0A	; 10
+  e2:	d8 07       	cpc	r29, r24
+  e4:	b9 f7       	brne	.-18     	; 0xd4 <usart_read_chars+0x8>
+			break;
+		}
+	}
+}
+  e6:	df 91       	pop	r29
+  e8:	cf 91       	pop	r28
+  ea:	08 95       	ret
+
+000000ec <AM29F016B_set_address>:
+
+void AM29F016B_set_address (uint32_t setAddress) {
+	// All off
+	PORTG &= ~((1<<AM29F016B_A8) | (1<<AM29F016B_A11));
+  ec:	24 b3       	in	r18, 0x14	; 20
+  ee:	27 7e       	andi	r18, 0xE7	; 231
+  f0:	24 bb       	out	0x14, r18	; 20
+	PORTF &= ~((1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20));
+  f2:	21 b3       	in	r18, 0x11	; 17
+  f4:	28 7e       	andi	r18, 0xE8	; 232
+  f6:	21 bb       	out	0x11, r18	; 17
+	PORTE &= ~((1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17));
+  f8:	2e b1       	in	r18, 0x0e	; 14
+  fa:	27 74       	andi	r18, 0x47	; 71
+  fc:	2e b9       	out	0x0e, r18	; 14
+	PORTD &= ~((1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19));
+  fe:	2b b1       	in	r18, 0x0b	; 11
+ 100:	21 7f       	andi	r18, 0xF1	; 241
+ 102:	2b b9       	out	0x0b, r18	; 11
+	PORTC &= ~((1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3));
+ 104:	28 b1       	in	r18, 0x08	; 8
+ 106:	27 76       	andi	r18, 0x67	; 103
+ 108:	28 b9       	out	0x08, r18	; 8
+	PORTB &= ~((1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14));
+ 10a:	25 b1       	in	r18, 0x05	; 5
+ 10c:	26 76       	andi	r18, 0x66	; 102
+ 10e:	25 b9       	out	0x05, r18	; 5
+	PORTA &= ~((1<<AM29F016B_A2));
+ 110:	12 98       	cbi	0x02, 2	; 2
+	
+	// Set
+	if (setAddress & 0x01) {
+ 112:	60 fd       	sbrc	r22, 0
+		PORTC |= (1<<AM29F016B_A0);
+ 114:	43 9a       	sbi	0x08, 3	; 8
+	}
+	if (setAddress & 0x02) {
+ 116:	61 fd       	sbrc	r22, 1
+		PORTC |= (1<<AM29F016B_A1);
+ 118:	47 9a       	sbi	0x08, 7	; 8
+	}
+	if (setAddress & 0x04) {
+ 11a:	62 fd       	sbrc	r22, 2
+		PORTA |= (1<<AM29F016B_A2);
+ 11c:	12 9a       	sbi	0x02, 2	; 2
+	}
+	if (setAddress & 0x08) {
+ 11e:	63 fd       	sbrc	r22, 3
+		PORTC |= (1<<AM29F016B_A3);
+ 120:	44 9a       	sbi	0x08, 4	; 8
+	}
+	if (setAddress & 0x010) {
+ 122:	64 fd       	sbrc	r22, 4
+		PORTE |= (1<<AM29F016B_A4);
+ 124:	75 9a       	sbi	0x0e, 5	; 14
+	}
+	if (setAddress & 0x20) {
+ 126:	65 fd       	sbrc	r22, 5
+		PORTB |= (1<<AM29F016B_A5);
+ 128:	2f 9a       	sbi	0x05, 7	; 5
+	}
+	if (setAddress & 0x40) {
+ 12a:	66 fd       	sbrc	r22, 6
+		PORTB |= (1<<AM29F016B_A6);
+ 12c:	2b 9a       	sbi	0x05, 3	; 5
+	}
+	if (setAddress & 0x80) {
+ 12e:	67 fd       	sbrc	r22, 7
+		PORTE |= (1<<AM29F016B_A7);
+ 130:	74 9a       	sbi	0x0e, 4	; 14
+	}
+	if (setAddress & 0x100) {
+ 132:	70 fd       	sbrc	r23, 0
+		PORTG |= (1<<AM29F016B_A8);
+ 134:	a3 9a       	sbi	0x14, 3	; 20
+	}
+	if (setAddress & 0x200) {
+ 136:	71 fd       	sbrc	r23, 1
+		PORTB |= (1<<AM29F016B_A9);
+ 138:	2c 9a       	sbi	0x05, 4	; 5
+	}
+	if (setAddress & 0x400) {
+ 13a:	72 fd       	sbrc	r23, 2
+		PORTE |= (1<<AM29F016B_A10);
+ 13c:	73 9a       	sbi	0x0e, 3	; 14
+	}
+	if (setAddress & 0x800) {
+ 13e:	73 fd       	sbrc	r23, 3
+		PORTG |= (1<<AM29F016B_A11);
+ 140:	a4 9a       	sbi	0x14, 4	; 20
+	}
+	if (setAddress & 0x1000) {
+ 142:	74 fd       	sbrc	r23, 4
+		PORTF |= (1<<AM29F016B_A12);
+ 144:	88 9a       	sbi	0x11, 0	; 17
+	}
+	if (setAddress & 0x2000) {
+ 146:	75 fd       	sbrc	r23, 5
+		PORTD |= (1<<AM29F016B_A13);
+ 148:	59 9a       	sbi	0x0b, 1	; 11
+	}
+	if (setAddress & 0x4000) {
+ 14a:	76 fd       	sbrc	r23, 6
+		PORTB |= (1<<AM29F016B_A14);
+ 14c:	28 9a       	sbi	0x05, 0	; 5
+	}
+	if (setAddress & 0x8000) {
+ 14e:	77 fd       	sbrc	r23, 7
+		PORTF |= (1<<AM29F016B_A15);
+ 150:	89 9a       	sbi	0x11, 1	; 17
+	}
+	if (setAddress & 0x10000) {
+ 152:	80 fd       	sbrc	r24, 0
+		PORTD |= (1<<AM29F016B_A16);
+ 154:	5a 9a       	sbi	0x0b, 2	; 11
+	}
+	if (setAddress & 0x20000) {
+ 156:	81 fd       	sbrc	r24, 1
+		PORTE |= (1<<AM29F016B_A17);
+ 158:	77 9a       	sbi	0x0e, 7	; 14
+	}
+	if (setAddress & 0x40000) {
+ 15a:	82 fd       	sbrc	r24, 2
+		PORTF |= (1<<AM29F016B_A18);
+ 15c:	8a 9a       	sbi	0x11, 2	; 17
+	}
+	if (setAddress & 0x80000) {
+ 15e:	83 fd       	sbrc	r24, 3
+		PORTD |= (1<<AM29F016B_A19);
+ 160:	5b 9a       	sbi	0x0b, 3	; 11
+	}
+	if (setAddress & 0x100000) {
+ 162:	84 fd       	sbrc	r24, 4
+		PORTF |= (1<<AM29F016B_A20);
+ 164:	8c 9a       	sbi	0x11, 4	; 17
+ 166:	08 95       	ret
+
+00000168 <AM29F016B_set_data>:
+	}
+}
+
+void AM29F016B_set_data (uint8_t data) {
+	// All off
+	PORTF &= ~((1<<AM29F016B_D6));
+ 168:	8e 98       	cbi	0x11, 6	; 17
+	PORTC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 16a:	98 b1       	in	r25, 0x08	; 8
+ 16c:	9a 7b       	andi	r25, 0xBA	; 186
+ 16e:	98 b9       	out	0x08, r25	; 8
+	PORTA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 170:	92 b1       	in	r25, 0x02	; 2
+ 172:	9c 73       	andi	r25, 0x3C	; 60
+ 174:	92 b9       	out	0x02, r25	; 2
+	
+	// Set
+	if (data & (1<<0)) {
+ 176:	80 fd       	sbrc	r24, 0
+		PORTA |= (1<<AM29F016B_D0);
+ 178:	11 9a       	sbi	0x02, 1	; 2
+	}
+	if (data & (1<<1)) {
+ 17a:	81 fd       	sbrc	r24, 1
+		PORTC |= (1<<AM29F016B_D1);
+ 17c:	46 9a       	sbi	0x08, 6	; 8
+	}
+	if (data & (1<<2)) {
+ 17e:	82 fd       	sbrc	r24, 2
+		PORTC |= (1<<AM29F016B_D2);
+ 180:	42 9a       	sbi	0x08, 2	; 8
+	}
+	if (data & (1<<3)) {
+ 182:	83 fd       	sbrc	r24, 3
+		PORTA |= (1<<AM29F016B_D3);
+ 184:	10 9a       	sbi	0x02, 0	; 2
+	}
+	if (data & (1<<4)) {
+ 186:	84 fd       	sbrc	r24, 4
+		PORTA |= (1<<AM29F016B_D4);
+ 188:	17 9a       	sbi	0x02, 7	; 2
+	}
+	if (data & (1<<5)) {
+ 18a:	85 fd       	sbrc	r24, 5
+		PORTC |= (1<<AM29F016B_D5);
+ 18c:	40 9a       	sbi	0x08, 0	; 8
+	}
+	if (data & (1<<6)) {
+ 18e:	86 fd       	sbrc	r24, 6
+		PORTF |= (1<<AM29F016B_D6);
+ 190:	8e 9a       	sbi	0x11, 6	; 17
+	}
+	if (data & (1<<7)) {
+ 192:	87 fd       	sbrc	r24, 7
+		PORTA |= (1<<AM29F016B_D7);
+ 194:	16 9a       	sbi	0x02, 6	; 2
+ 196:	08 95       	ret
+
+00000198 <AM29F016B_set_data_outputs>:
+	}
+}
+
+void AM29F016B_set_data_outputs(void) {
+	DDRF |= (1<<AM29F016B_D6);
+ 198:	86 9a       	sbi	0x10, 6	; 16
+	DDRC |= (1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1);
+ 19a:	87 b1       	in	r24, 0x07	; 7
+ 19c:	85 64       	ori	r24, 0x45	; 69
+ 19e:	87 b9       	out	0x07, r24	; 7
+	DDRA |= (1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4);
+ 1a0:	81 b1       	in	r24, 0x01	; 1
+ 1a2:	83 6c       	ori	r24, 0xC3	; 195
+ 1a4:	81 b9       	out	0x01, r24	; 1
+ 1a6:	08 95       	ret
+
+000001a8 <AM29F016B_set_data_inputs>:
+}
+
+void AM29F016B_set_data_inputs(void) {
+	PORTF &= ~((1<<AM29F016B_D6));
+ 1a8:	8e 98       	cbi	0x11, 6	; 17
+	PORTC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 1aa:	88 b1       	in	r24, 0x08	; 8
+ 1ac:	8a 7b       	andi	r24, 0xBA	; 186
+ 1ae:	88 b9       	out	0x08, r24	; 8
+	PORTA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 1b0:	82 b1       	in	r24, 0x02	; 2
+ 1b2:	8c 73       	andi	r24, 0x3C	; 60
+ 1b4:	82 b9       	out	0x02, r24	; 2
+	DDRF &= ~((1<<AM29F016B_D6));
+ 1b6:	86 98       	cbi	0x10, 6	; 16
+	DDRC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 1b8:	87 b1       	in	r24, 0x07	; 7
+ 1ba:	8a 7b       	andi	r24, 0xBA	; 186
+ 1bc:	87 b9       	out	0x07, r24	; 7
+	DDRA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 1be:	81 b1       	in	r24, 0x01	; 1
+ 1c0:	8c 73       	andi	r24, 0x3C	; 60
+ 1c2:	81 b9       	out	0x01, r24	; 1
+ 1c4:	08 95       	ret
+
+000001c6 <AM29F016B_read_data>:
+}
+
+uint8_t AM29F016B_read_data(void) {
+	uint8_t dataRead = 0;
+	
+	if (PINA & (1<<AM29F016B_D7)) {
+ 1c6:	06 9b       	sbis	0x00, 6	; 0
+ 1c8:	02 c0       	rjmp	.+4      	; 0x1ce <AM29F016B_read_data+0x8>
+		dataRead |= (1<<7);
+ 1ca:	80 e8       	ldi	r24, 0x80	; 128
+ 1cc:	01 c0       	rjmp	.+2      	; 0x1d0 <AM29F016B_read_data+0xa>
+	DDRC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+	DDRA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+}
+
+uint8_t AM29F016B_read_data(void) {
+	uint8_t dataRead = 0;
+ 1ce:	80 e0       	ldi	r24, 0x00	; 0
+	
+	if (PINA & (1<<AM29F016B_D7)) {
+		dataRead |= (1<<7);
+	}
+	if (PINF & (1<<AM29F016B_D6)) {
+ 1d0:	7e 99       	sbic	0x0f, 6	; 15
+		dataRead |= (1<<6);
+ 1d2:	80 64       	ori	r24, 0x40	; 64
+	}
+	if (PINC & (1<<AM29F016B_D5)) {
+ 1d4:	30 99       	sbic	0x06, 0	; 6
+		dataRead |= (1<<5);
+ 1d6:	80 62       	ori	r24, 0x20	; 32
+	}
+	if (PINA & (1<<AM29F016B_D4)) {
+ 1d8:	07 99       	sbic	0x00, 7	; 0
+		dataRead |= (1<<4);
+ 1da:	80 61       	ori	r24, 0x10	; 16
+	}
+	if (PINA & (1<<AM29F016B_D3)) {
+ 1dc:	00 99       	sbic	0x00, 0	; 0
+		dataRead |= (1<<3);
+ 1de:	88 60       	ori	r24, 0x08	; 8
+	}
+	if (PINC & (1<<AM29F016B_D2)) {
+ 1e0:	32 99       	sbic	0x06, 2	; 6
+		dataRead |= (1<<2);
+ 1e2:	84 60       	ori	r24, 0x04	; 4
+	}
+	if (PINC & (1<<AM29F016B_D1)) {
+ 1e4:	36 99       	sbic	0x06, 6	; 6
+		dataRead |= (1<<1);
+ 1e6:	82 60       	ori	r24, 0x02	; 2
+	}
+	if (PINA & (1<<AM29F016B_D0)) {
+ 1e8:	01 99       	sbic	0x00, 1	; 0
+		dataRead |= (1<<0);
+ 1ea:	81 60       	ori	r24, 0x01	; 1
+	}
+	
+	return dataRead;
+}
+ 1ec:	08 95       	ret
+
+000001ee <AM29F016B_write_address_with_data>:
+
+void AM29F016B_write_address_with_data(uint32_t writeAddress, uint8_t writeData) {
+ 1ee:	cf 93       	push	r28
+ 1f0:	c4 2f       	mov	r28, r20
+	AM29F016B_set_address(writeAddress);
+ 1f2:	0e 94 76 00 	call	0xec	; 0xec <AM29F016B_set_address>
+	AM29F016B_set_data(writeData);
+ 1f6:	8c 2f       	mov	r24, r28
+ 1f8:	0e 94 b4 00 	call	0x168	; 0x168 <AM29F016B_set_data>
+	AM29F016B_cePin_low;
+ 1fc:	29 98       	cbi	0x05, 1	; 5
+	AM29F016B_wePin_low;
+ 1fe:	15 98       	cbi	0x02, 5	; 2
+	asm volatile("nop");
+ 200:	00 00       	nop
+	asm volatile("nop");
+ 202:	00 00       	nop
+	AM29F016B_cePin_high;
+ 204:	29 9a       	sbi	0x05, 1	; 5
+	AM29F016B_wePin_high;
+ 206:	15 9a       	sbi	0x02, 5	; 2
+}
+ 208:	cf 91       	pop	r28
+ 20a:	08 95       	ret
+
+0000020c <AM29F016B_read_address>:
+
+uint8_t AM29F016B_read_address(uint32_t readAddress) {
+	uint8_t data = 0;
+	
+	AM29F016B_set_address(readAddress);
+ 20c:	0e 94 76 00 	call	0xec	; 0xec <AM29F016B_set_address>
+	AM29F016B_cePin_low;
+ 210:	29 98       	cbi	0x05, 1	; 5
+	AM29F016B_rdPin_low;
+ 212:	8d 98       	cbi	0x11, 5	; 17
+	asm volatile("nop");
+ 214:	00 00       	nop
+	asm volatile("nop");
+ 216:	00 00       	nop
+	data = AM29F016B_read_data();
+ 218:	0e 94 e3 00 	call	0x1c6	; 0x1c6 <AM29F016B_read_data>
+	AM29F016B_cePin_high;
+ 21c:	29 9a       	sbi	0x05, 1	; 5
+	AM29F016B_rdPin_high;
+ 21e:	8d 9a       	sbi	0x11, 5	; 17
+	
+	return data;
+}
+ 220:	08 95       	ret
+
+00000222 <AM29F016B_read_address_fast>:
+
+uint8_t AM29F016B_read_address_fast(void) {
+	uint8_t data = 0;
+	
+	AM29F016B_cePin_low;
+ 222:	29 98       	cbi	0x05, 1	; 5
+	AM29F016B_rdPin_low;
+ 224:	8d 98       	cbi	0x11, 5	; 17
+	asm volatile("nop");
+ 226:	00 00       	nop
+	asm volatile("nop");
+ 228:	00 00       	nop
+	data = AM29F016B_read_data();
+ 22a:	0e 94 e3 00 	call	0x1c6	; 0x1c6 <AM29F016B_read_data>
+	AM29F016B_cePin_high;
+ 22e:	29 9a       	sbi	0x05, 1	; 5
+	AM29F016B_rdPin_high;
+ 230:	8d 9a       	sbi	0x11, 5	; 17
+	
+	return data;
+}
+ 232:	08 95       	ret
+
+00000234 <AM29F016B_flash_write_cycle_555>:
+
+void AM29F016B_flash_write_cycle_555(void) {
+	// 0x555
+	PORTG &= ~((1<<AM29F016B_A8) | (1<<AM29F016B_A11));
+ 234:	84 b3       	in	r24, 0x14	; 20
+ 236:	87 7e       	andi	r24, 0xE7	; 231
+ 238:	84 bb       	out	0x14, r24	; 20
+	PORTF &= ~((1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20));
+ 23a:	81 b3       	in	r24, 0x11	; 17
+ 23c:	88 7e       	andi	r24, 0xE8	; 232
+ 23e:	81 bb       	out	0x11, r24	; 17
+	PORTE &= ~((1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17));
+ 240:	8e b1       	in	r24, 0x0e	; 14
+ 242:	87 74       	andi	r24, 0x47	; 71
+ 244:	8e b9       	out	0x0e, r24	; 14
+	PORTD &= ~((1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19));
+ 246:	8b b1       	in	r24, 0x0b	; 11
+ 248:	81 7f       	andi	r24, 0xF1	; 241
+ 24a:	8b b9       	out	0x0b, r24	; 11
+	PORTC &= ~((1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3));
+ 24c:	88 b1       	in	r24, 0x08	; 8
+ 24e:	87 76       	andi	r24, 0x67	; 103
+ 250:	88 b9       	out	0x08, r24	; 8
+	PORTB &= ~((1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14));
+ 252:	85 b1       	in	r24, 0x05	; 5
+ 254:	86 76       	andi	r24, 0x66	; 102
+ 256:	85 b9       	out	0x05, r24	; 5
+	PORTA &= ~((1<<AM29F016B_A2));
+ 258:	12 98       	cbi	0x02, 2	; 2
+	PORTC |= (1<<AM29F016B_A0);
+ 25a:	43 9a       	sbi	0x08, 3	; 8
+	PORTA |= (1<<AM29F016B_A2);
+ 25c:	12 9a       	sbi	0x02, 2	; 2
+	PORTE |= (1<<AM29F016B_A4);
+ 25e:	75 9a       	sbi	0x0e, 5	; 14
+	PORTB |= (1<<AM29F016B_A6);
+ 260:	2b 9a       	sbi	0x05, 3	; 5
+	PORTG |= (1<<AM29F016B_A8);
+ 262:	a3 9a       	sbi	0x14, 3	; 20
+	PORTE |= (1<<AM29F016B_A10);
+ 264:	73 9a       	sbi	0x0e, 3	; 14
+	
+	// 0xAA
+	PORTF &= ~((1<<AM29F016B_D6));
+ 266:	8e 98       	cbi	0x11, 6	; 17
+	PORTC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 268:	88 b1       	in	r24, 0x08	; 8
+ 26a:	8a 7b       	andi	r24, 0xBA	; 186
+ 26c:	88 b9       	out	0x08, r24	; 8
+	PORTA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 26e:	82 b1       	in	r24, 0x02	; 2
+ 270:	8c 73       	andi	r24, 0x3C	; 60
+ 272:	82 b9       	out	0x02, r24	; 2
+	PORTC |= (1<<AM29F016B_D1);
+ 274:	46 9a       	sbi	0x08, 6	; 8
+	PORTA |= (1<<AM29F016B_D3);
+ 276:	10 9a       	sbi	0x02, 0	; 2
+	PORTC |= (1<<AM29F016B_D5);
+ 278:	40 9a       	sbi	0x08, 0	; 8
+	PORTA |= (1<<AM29F016B_D7);
+ 27a:	16 9a       	sbi	0x02, 6	; 2
+	
+	AM29F016B_cePin_low;
+ 27c:	29 98       	cbi	0x05, 1	; 5
+	AM29F016B_wePin_low;
+ 27e:	15 98       	cbi	0x02, 5	; 2
+	asm volatile("nop");
+ 280:	00 00       	nop
+	asm volatile("nop");
+ 282:	00 00       	nop
+	AM29F016B_cePin_high;
+ 284:	29 9a       	sbi	0x05, 1	; 5
+	AM29F016B_wePin_high;
+ 286:	15 9a       	sbi	0x02, 5	; 2
+	
+	
+	// 0x2AA
+	PORTG &= ~((1<<AM29F016B_A8) | (1<<AM29F016B_A11));
+ 288:	84 b3       	in	r24, 0x14	; 20
+ 28a:	87 7e       	andi	r24, 0xE7	; 231
+ 28c:	84 bb       	out	0x14, r24	; 20
+	PORTF &= ~((1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20));
+ 28e:	81 b3       	in	r24, 0x11	; 17
+ 290:	88 7e       	andi	r24, 0xE8	; 232
+ 292:	81 bb       	out	0x11, r24	; 17
+	PORTE &= ~((1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17));
+ 294:	8e b1       	in	r24, 0x0e	; 14
+ 296:	87 74       	andi	r24, 0x47	; 71
+ 298:	8e b9       	out	0x0e, r24	; 14
+	PORTD &= ~((1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19));
+ 29a:	8b b1       	in	r24, 0x0b	; 11
+ 29c:	81 7f       	andi	r24, 0xF1	; 241
+ 29e:	8b b9       	out	0x0b, r24	; 11
+	PORTC &= ~((1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3));
+ 2a0:	88 b1       	in	r24, 0x08	; 8
+ 2a2:	87 76       	andi	r24, 0x67	; 103
+ 2a4:	88 b9       	out	0x08, r24	; 8
+	PORTB &= ~((1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14));
+ 2a6:	85 b1       	in	r24, 0x05	; 5
+ 2a8:	86 76       	andi	r24, 0x66	; 102
+ 2aa:	85 b9       	out	0x05, r24	; 5
+	PORTA &= ~((1<<AM29F016B_A2));
+ 2ac:	12 98       	cbi	0x02, 2	; 2
+	PORTE |= (1<<AM29F016B_A7);
+ 2ae:	74 9a       	sbi	0x0e, 4	; 14
+	PORTC |= (1<<AM29F016B_A1) | (1<<AM29F016B_A3);
+ 2b0:	88 b1       	in	r24, 0x08	; 8
+ 2b2:	80 69       	ori	r24, 0x90	; 144
+ 2b4:	88 b9       	out	0x08, r24	; 8
+	PORTB |= (1<<AM29F016B_A5) | (1<<AM29F016B_A9);
+ 2b6:	85 b1       	in	r24, 0x05	; 5
+ 2b8:	80 69       	ori	r24, 0x90	; 144
+ 2ba:	85 b9       	out	0x05, r24	; 5
+	
+	// 0x55
+	PORTF &= ~((1<<AM29F016B_D6));
+ 2bc:	8e 98       	cbi	0x11, 6	; 17
+	PORTC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 2be:	88 b1       	in	r24, 0x08	; 8
+ 2c0:	8a 7b       	andi	r24, 0xBA	; 186
+ 2c2:	88 b9       	out	0x08, r24	; 8
+	PORTA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 2c4:	82 b1       	in	r24, 0x02	; 2
+ 2c6:	8c 73       	andi	r24, 0x3C	; 60
+ 2c8:	82 b9       	out	0x02, r24	; 2
+	PORTF |= (1<<AM29F016B_D6);
+ 2ca:	8e 9a       	sbi	0x11, 6	; 17
+	PORTC |= (1<<AM29F016B_D2);
+ 2cc:	42 9a       	sbi	0x08, 2	; 8
+	PORTA |= (1<<AM29F016B_D0) | (1<<AM29F016B_D4);
+ 2ce:	82 b1       	in	r24, 0x02	; 2
+ 2d0:	82 68       	ori	r24, 0x82	; 130
+ 2d2:	82 b9       	out	0x02, r24	; 2
+	
+	
+	AM29F016B_cePin_low;
+ 2d4:	29 98       	cbi	0x05, 1	; 5
+	AM29F016B_wePin_low;
+ 2d6:	15 98       	cbi	0x02, 5	; 2
+	asm volatile("nop");
+ 2d8:	00 00       	nop
+	asm volatile("nop");
+ 2da:	00 00       	nop
+	AM29F016B_cePin_high;
+ 2dc:	29 9a       	sbi	0x05, 1	; 5
+	AM29F016B_wePin_high;
+ 2de:	15 9a       	sbi	0x02, 5	; 2
+	
+	
+	// 0x555
+	PORTG &= ~((1<<AM29F016B_A8) | (1<<AM29F016B_A11));
+ 2e0:	84 b3       	in	r24, 0x14	; 20
+ 2e2:	87 7e       	andi	r24, 0xE7	; 231
+ 2e4:	84 bb       	out	0x14, r24	; 20
+	PORTF &= ~((1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20));
+ 2e6:	81 b3       	in	r24, 0x11	; 17
+ 2e8:	88 7e       	andi	r24, 0xE8	; 232
+ 2ea:	81 bb       	out	0x11, r24	; 17
+	PORTE &= ~((1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17));
+ 2ec:	8e b1       	in	r24, 0x0e	; 14
+ 2ee:	87 74       	andi	r24, 0x47	; 71
+ 2f0:	8e b9       	out	0x0e, r24	; 14
+	PORTD &= ~((1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19));
+ 2f2:	8b b1       	in	r24, 0x0b	; 11
+ 2f4:	81 7f       	andi	r24, 0xF1	; 241
+ 2f6:	8b b9       	out	0x0b, r24	; 11
+	PORTC &= ~((1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3));
+ 2f8:	88 b1       	in	r24, 0x08	; 8
+ 2fa:	87 76       	andi	r24, 0x67	; 103
+ 2fc:	88 b9       	out	0x08, r24	; 8
+	PORTB &= ~((1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14));
+ 2fe:	85 b1       	in	r24, 0x05	; 5
+ 300:	86 76       	andi	r24, 0x66	; 102
+ 302:	85 b9       	out	0x05, r24	; 5
+	PORTA &= ~((1<<AM29F016B_A2));
+ 304:	12 98       	cbi	0x02, 2	; 2
+	PORTC |= (1<<AM29F016B_A0);
+ 306:	43 9a       	sbi	0x08, 3	; 8
+	PORTA |= (1<<AM29F016B_A2);
+ 308:	12 9a       	sbi	0x02, 2	; 2
+	PORTE |= (1<<AM29F016B_A4);
+ 30a:	75 9a       	sbi	0x0e, 5	; 14
+	PORTB |= (1<<AM29F016B_A6);
+ 30c:	2b 9a       	sbi	0x05, 3	; 5
+	PORTG |= (1<<AM29F016B_A8);
+ 30e:	a3 9a       	sbi	0x14, 3	; 20
+	PORTE |= (1<<AM29F016B_A10);
+ 310:	73 9a       	sbi	0x0e, 3	; 14
+	
+	// 0xA0
+	PORTF &= ~((1<<AM29F016B_D6));
+ 312:	8e 98       	cbi	0x11, 6	; 17
+	PORTC &= ~((1<<AM29F016B_D5) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 314:	88 b1       	in	r24, 0x08	; 8
+ 316:	8a 7b       	andi	r24, 0xBA	; 186
+ 318:	88 b9       	out	0x08, r24	; 8
+	PORTA &= ~((1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4));
+ 31a:	82 b1       	in	r24, 0x02	; 2
+ 31c:	8c 73       	andi	r24, 0x3C	; 60
+ 31e:	82 b9       	out	0x02, r24	; 2
+	PORTC |= (1<<AM29F016B_D5);
+ 320:	40 9a       	sbi	0x08, 0	; 8
+	PORTA |= (1<<AM29F016B_D7);
+ 322:	16 9a       	sbi	0x02, 6	; 2
+	
+	AM29F016B_cePin_low;
+ 324:	29 98       	cbi	0x05, 1	; 5
+	AM29F016B_wePin_low;
+ 326:	15 98       	cbi	0x02, 5	; 2
+	asm volatile("nop");
+ 328:	00 00       	nop
+	asm volatile("nop");
+ 32a:	00 00       	nop
+	AM29F016B_cePin_high;
+ 32c:	29 9a       	sbi	0x05, 1	; 5
+	AM29F016B_wePin_high;
+ 32e:	15 9a       	sbi	0x02, 5	; 2
+ 330:	08 95       	ret
+
+00000332 <setup>:
+
+
+// Setup
+void setup(void) {
+	// Light LED
+	DDRD |= (1<<ACTIVITY_LED);
+ 332:	54 9a       	sbi	0x0a, 4	; 10
+	PORTD |= (1<<ACTIVITY_LED);
+ 334:	5c 9a       	sbi	0x0b, 4	; 11
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 336:	2f ef       	ldi	r18, 0xFF	; 255
+ 338:	89 e6       	ldi	r24, 0x69	; 105
+ 33a:	98 e1       	ldi	r25, 0x18	; 24
+ 33c:	21 50       	subi	r18, 0x01	; 1
+ 33e:	80 40       	sbci	r24, 0x00	; 0
+ 340:	90 40       	sbci	r25, 0x00	; 0
+ 342:	e1 f7       	brne	.-8      	; 0x33c <setup+0xa>
+ 344:	00 c0       	rjmp	.+0      	; 0x346 <setup+0x14>
+ 346:	00 00       	nop
+	_delay_ms(500);
+	PORTD &= ~(1<<ACTIVITY_LED);
+ 348:	5c 98       	cbi	0x0b, 4	; 11
+ 34a:	2f ef       	ldi	r18, 0xFF	; 255
+ 34c:	89 e6       	ldi	r24, 0x69	; 105
+ 34e:	98 e1       	ldi	r25, 0x18	; 24
+ 350:	21 50       	subi	r18, 0x01	; 1
+ 352:	80 40       	sbci	r24, 0x00	; 0
+ 354:	90 40       	sbci	r25, 0x00	; 0
+ 356:	e1 f7       	brne	.-8      	; 0x350 <setup+0x1e>
+ 358:	00 c0       	rjmp	.+0      	; 0x35a <setup+0x28>
+ 35a:	00 00       	nop
+	_delay_ms(500);
+	
+	// Setup USART
+	UBRRL = 0; // 1Mbps Baud rate
+ 35c:	10 92 c4 00 	sts	0x00C4, r1	; 0x8000c4 <__TEXT_REGION_LENGTH__+0x7e00c4>
+	sbi(UCSRB, RXEN); // Receiver enable
+ 360:	e1 ec       	ldi	r30, 0xC1	; 193
+ 362:	f0 e0       	ldi	r31, 0x00	; 0
+ 364:	80 81       	ld	r24, Z
+ 366:	80 61       	ori	r24, 0x10	; 16
+ 368:	80 83       	st	Z, r24
+	sbi(UCSRB, TXEN); // Transmitter enable
+ 36a:	80 81       	ld	r24, Z
+ 36c:	88 60       	ori	r24, 0x08	; 8
+ 36e:	80 83       	st	Z, r24
+	
+	// Turn on interrupts
+	sei();
+ 370:	78 94       	sei
+ 372:	08 95       	ret
+
+00000374 <main>:
+#include "setup.c" // See defines, variables, constants, functions here
+
+#define FIRMWARE_VERSION 1
+
+int main(void) {
+	setup();
+ 374:	0e 94 99 01 	call	0x332	; 0x332 <setup>
+	
+	uint32_t address = 0;
+ 378:	c1 2c       	mov	r12, r1
+ 37a:	d1 2c       	mov	r13, r1
+ 37c:	76 01       	movw	r14, r12
+			// Set AM29F016B I/O
+			DDRG |= (1<<AM29F016B_A8) | (1<<AM29F016B_A11);
+			DDRF |= (1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20) | (1<<AM29F016B_D6) | (1<<AM29F016B_5V_2) | (1<<AM29F016B_RD);
+			DDRE |= (1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17);
+			DDRD |= (1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19) | (1<<AM29F016B_5V_1);
+			DDRC |= (1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3) | (1<<AM29F016B_GND_1) | (1<<AM29F016B_D5) | (1<<AM29F016B_GND_2) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1);
+ 37e:	0f ef       	ldi	r16, 0xFF	; 255
+	setup();
+	
+	uint32_t address = 0;
+	
+	while(1) {
+		receivedChar = USART_Receive(); 
+ 380:	0e 94 42 00 	call	0x84	; 0x84 <USART_Receive>
+ 384:	80 93 00 02 	sts	0x0200, r24	; 0x800200 <receivedChar>
+		
+		if (receivedChar == TSOP_POWER_UP) {
+ 388:	85 35       	cpi	r24, 0x55	; 85
+ 38a:	d9 f4       	brne	.+54     	; 0x3c2 <main+0x4e>
+			// Set AM29F016B I/O
+			DDRG |= (1<<AM29F016B_A8) | (1<<AM29F016B_A11);
+ 38c:	83 b3       	in	r24, 0x13	; 19
+ 38e:	88 61       	ori	r24, 0x18	; 24
+ 390:	83 bb       	out	0x13, r24	; 19
+			DDRF |= (1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20) | (1<<AM29F016B_D6) | (1<<AM29F016B_5V_2) | (1<<AM29F016B_RD);
+ 392:	80 b3       	in	r24, 0x10	; 16
+ 394:	87 6f       	ori	r24, 0xF7	; 247
+ 396:	80 bb       	out	0x10, r24	; 16
+			DDRE |= (1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17);
+ 398:	8d b1       	in	r24, 0x0d	; 13
+ 39a:	88 6b       	ori	r24, 0xB8	; 184
+ 39c:	8d b9       	out	0x0d, r24	; 13
+			DDRD |= (1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19) | (1<<AM29F016B_5V_1);
+ 39e:	8a b1       	in	r24, 0x0a	; 10
+ 3a0:	8f 60       	ori	r24, 0x0F	; 15
+ 3a2:	8a b9       	out	0x0a, r24	; 10
+			DDRC |= (1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3) | (1<<AM29F016B_GND_1) | (1<<AM29F016B_D5) | (1<<AM29F016B_GND_2) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1);
+ 3a4:	87 b1       	in	r24, 0x07	; 7
+ 3a6:	07 b9       	out	0x07, r16	; 7
+			DDRB |= (1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14) | (1<<AM29F016B_CE) | (1<<AM29F016B_RESET);
+ 3a8:	84 b1       	in	r24, 0x04	; 4
+ 3aa:	8b 6b       	ori	r24, 0xBB	; 187
+ 3ac:	84 b9       	out	0x04, r24	; 4
+			DDRA |= (1<<AM29F016B_A2) | (1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4) | (1<<AM29F016B_WE);
+ 3ae:	81 b1       	in	r24, 0x01	; 1
+ 3b0:	87 6e       	ori	r24, 0xE7	; 231
+ 3b2:	81 b9       	out	0x01, r24	; 1
+			
+			// Apply AM29F016B VCC/Reset
+			PORTD |= (1<<AM29F016B_5V_1);
+ 3b4:	58 9a       	sbi	0x0b, 0	; 11
+			PORTF |= (1<<AM29F016B_5V_2);
+ 3b6:	8f 9a       	sbi	0x11, 7	; 17
+			PORTB |= (1<<AM29F016B_RESET);
+ 3b8:	2d 9a       	sbi	0x05, 5	; 5
+			
+			// WR, RD, CS high
+			AM29F016B_wePin_high;
+ 3ba:	15 9a       	sbi	0x02, 5	; 2
+			AM29F016B_rdPin_high;
+ 3bc:	8d 9a       	sbi	0x11, 5	; 17
+			AM29F016B_cePin_high;
+ 3be:	29 9a       	sbi	0x05, 1	; 5
+ 3c0:	df cf       	rjmp	.-66     	; 0x380 <main+0xc>
+		}
+		else if (receivedChar == TSOP_POWER_DOWN) {
+ 3c2:	84 34       	cpi	r24, 0x44	; 68
+ 3c4:	11 f5       	brne	.+68     	; 0x40a <__LOCK_REGION_LENGTH__+0xa>
+			// Ground AM29F016B VCC/Reset
+			PORTB &= ~(1<<AM29F016B_RESET);
+ 3c6:	2d 98       	cbi	0x05, 5	; 5
+			PORTD &= ~(1<<AM29F016B_5V_1);
+ 3c8:	58 98       	cbi	0x0b, 0	; 11
+			PORTF &= ~(1<<AM29F016B_5V_2);
+ 3ca:	8f 98       	cbi	0x11, 7	; 17
+			
+			// WR, RD, CS low
+			AM29F016B_wePin_low;
+ 3cc:	15 98       	cbi	0x02, 5	; 2
+			AM29F016B_rdPin_low;
+ 3ce:	8d 98       	cbi	0x11, 5	; 17
+			AM29F016B_cePin_low;
+ 3d0:	29 98       	cbi	0x05, 1	; 5
+ 3d2:	2f ef       	ldi	r18, 0xFF	; 255
+ 3d4:	80 e7       	ldi	r24, 0x70	; 112
+ 3d6:	92 e0       	ldi	r25, 0x02	; 2
+ 3d8:	21 50       	subi	r18, 0x01	; 1
+ 3da:	80 40       	sbci	r24, 0x00	; 0
+ 3dc:	90 40       	sbci	r25, 0x00	; 0
+ 3de:	e1 f7       	brne	.-8      	; 0x3d8 <main+0x64>
+ 3e0:	00 c0       	rjmp	.+0      	; 0x3e2 <main+0x6e>
+ 3e2:	00 00       	nop
+			
+			_delay_ms(50);
+			
+			// Unset AM29F016B I/O
+			DDRG &= ((1<<AM29F016B_A8) | (1<<AM29F016B_A11));
+ 3e4:	83 b3       	in	r24, 0x13	; 19
+ 3e6:	88 71       	andi	r24, 0x18	; 24
+ 3e8:	83 bb       	out	0x13, r24	; 19
+			DDRF &= ((1<<AM29F016B_A12) | (1<<AM29F016B_A15) | (1<<AM29F016B_A18) | (1<<AM29F016B_A20) | (1<<AM29F016B_D6) | (1<<AM29F016B_5V_2) | (1<<AM29F016B_RD));
+ 3ea:	83 98       	cbi	0x10, 3	; 16
+			DDRE &= ((1<<AM29F016B_A4) | (1<<AM29F016B_A7) | (1<<AM29F016B_A10) | (1<<AM29F016B_A17));
+ 3ec:	8d b1       	in	r24, 0x0d	; 13
+ 3ee:	88 7b       	andi	r24, 0xB8	; 184
+ 3f0:	8d b9       	out	0x0d, r24	; 13
+			DDRD &= ((1<<AM29F016B_A13) | (1<<AM29F016B_A16) | (1<<AM29F016B_A19) | (1<<AM29F016B_5V_1));
+ 3f2:	8a b1       	in	r24, 0x0a	; 10
+ 3f4:	8f 70       	andi	r24, 0x0F	; 15
+ 3f6:	8a b9       	out	0x0a, r24	; 10
+			DDRC &= ((1<<AM29F016B_A0) | (1<<AM29F016B_A1) | (1<<AM29F016B_A3) | (1<<AM29F016B_GND_1) | (1<<AM29F016B_D5) | (1<<AM29F016B_GND_2) | (1<<AM29F016B_D2) | (1<<AM29F016B_D1));
+ 3f8:	87 b1       	in	r24, 0x07	; 7
+ 3fa:	87 b9       	out	0x07, r24	; 7
+			DDRB &= ((1<<AM29F016B_A5) | (1<<AM29F016B_A6) | (1<<AM29F016B_A9) | (1<<AM29F016B_A14) | (1<<AM29F016B_CE) | (1<<AM29F016B_RESET));
+ 3fc:	84 b1       	in	r24, 0x04	; 4
+ 3fe:	8b 7b       	andi	r24, 0xBB	; 187
+ 400:	84 b9       	out	0x04, r24	; 4
+			DDRA &= ((1<<AM29F016B_A2) | (1<<AM29F016B_D0) | (1<<AM29F016B_D3) | (1<<AM29F016B_D7) | (1<<AM29F016B_D4) | (1<<AM29F016B_WE));
+ 402:	81 b1       	in	r24, 0x01	; 1
+ 404:	87 7e       	andi	r24, 0xE7	; 231
+ 406:	81 b9       	out	0x01, r24	; 1
+ 408:	bb cf       	rjmp	.-138    	; 0x380 <main+0xc>
+		}
+		else if (receivedChar == SET_ADDRESS) {
+ 40a:	81 34       	cpi	r24, 0x41	; 65
+ 40c:	c1 f4       	brne	.+48     	; 0x43e <__LOCK_REGION_LENGTH__+0x3e>
+			usart_read_bytes(3);
+ 40e:	83 e0       	ldi	r24, 0x03	; 3
+ 410:	90 e0       	ldi	r25, 0x00	; 0
+ 412:	0e 94 50 00 	call	0xa0	; 0xa0 <usart_read_bytes>
+			address = (uint32_t) ((uint32_t) receivedBuffer[2] << 16) | ((uint32_t) receivedBuffer[1] << 8) | (uint32_t) receivedBuffer[0];
+ 416:	80 91 02 01 	lds	r24, 0x0102	; 0x800102 <_edata+0x2>
+ 41a:	c0 90 01 01 	lds	r12, 0x0101	; 0x800101 <_edata+0x1>
+ 41e:	d1 2c       	mov	r13, r1
+ 420:	e1 2c       	mov	r14, r1
+ 422:	f1 2c       	mov	r15, r1
+ 424:	fe 2c       	mov	r15, r14
+ 426:	ed 2c       	mov	r14, r13
+ 428:	dc 2c       	mov	r13, r12
+ 42a:	cc 24       	eor	r12, r12
+ 42c:	e8 2a       	or	r14, r24
+ 42e:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
+ 432:	c8 2a       	or	r12, r24
+			AM29F016B_set_address(address);
+ 434:	c7 01       	movw	r24, r14
+ 436:	b6 01       	movw	r22, r12
+ 438:	0e 94 76 00 	call	0xec	; 0xec <AM29F016B_set_address>
+ 43c:	a1 cf       	rjmp	.-190    	; 0x380 <main+0xc>
+		}
+		else if (receivedChar == READ_64_BYTES) {
+ 43e:	82 35       	cpi	r24, 0x52	; 82
+ 440:	c9 f4       	brne	.+50     	; 0x474 <__LOCK_REGION_LENGTH__+0x74>
+			PORTD |= (1<<ACTIVITY_LED);
+ 442:	5c 9a       	sbi	0x0b, 4	; 11
+			AM29F016B_set_data_inputs();
+ 444:	0e 94 d4 00 	call	0x1a8	; 0x1a8 <AM29F016B_set_data_inputs>
+ 448:	46 01       	movw	r8, r12
+ 44a:	57 01       	movw	r10, r14
+ 44c:	10 e4       	ldi	r17, 0x40	; 64
+			
+			for (uint8_t x = 0; x < 64; x++) {
+				USART_Transmit(AM29F016B_read_address(address));
+ 44e:	c5 01       	movw	r24, r10
+ 450:	b4 01       	movw	r22, r8
+ 452:	0e 94 06 01 	call	0x20c	; 0x20c <AM29F016B_read_address>
+ 456:	0e 94 49 00 	call	0x92	; 0x92 <USART_Transmit>
+				address++;
+ 45a:	2f ef       	ldi	r18, 0xFF	; 255
+ 45c:	82 1a       	sub	r8, r18
+ 45e:	92 0a       	sbc	r9, r18
+ 460:	a2 0a       	sbc	r10, r18
+ 462:	b2 0a       	sbc	r11, r18
+ 464:	11 50       	subi	r17, 0x01	; 1
+		}
+		else if (receivedChar == READ_64_BYTES) {
+			PORTD |= (1<<ACTIVITY_LED);
+			AM29F016B_set_data_inputs();
+			
+			for (uint8_t x = 0; x < 64; x++) {
+ 466:	99 f7       	brne	.-26     	; 0x44e <__LOCK_REGION_LENGTH__+0x4e>
+ 468:	80 e4       	ldi	r24, 0x40	; 64
+ 46a:	c8 0e       	add	r12, r24
+ 46c:	d1 1c       	adc	r13, r1
+ 46e:	e1 1c       	adc	r14, r1
+ 470:	f1 1c       	adc	r15, r1
+ 472:	3c c0       	rjmp	.+120    	; 0x4ec <__LOCK_REGION_LENGTH__+0xec>
+				address++;
+			}
+			
+			PORTD &= ~(1<<ACTIVITY_LED);
+		}
+		else if (receivedChar == WRITE_64_BYTES) {
+ 474:	87 35       	cpi	r24, 0x57	; 87
+ 476:	e1 f5       	brne	.+120    	; 0x4f0 <__LOCK_REGION_LENGTH__+0xf0>
+			usart_read_bytes(64);
+ 478:	80 e4       	ldi	r24, 0x40	; 64
+ 47a:	90 e0       	ldi	r25, 0x00	; 0
+ 47c:	0e 94 50 00 	call	0xa0	; 0xa0 <usart_read_bytes>
+			PORTD |= (1<<ACTIVITY_LED);
+ 480:	5c 9a       	sbi	0x0b, 4	; 11
+ 482:	c0 e0       	ldi	r28, 0x00	; 0
+ 484:	d1 e0       	ldi	r29, 0x01	; 1
+ 486:	46 01       	movw	r8, r12
+ 488:	57 01       	movw	r10, r14
+			
+			for (uint8_t x = 0; x < 64; x++) {
+				if (receivedBuffer[x] != 0xFF) {
+ 48a:	88 81       	ld	r24, Y
+ 48c:	8f 3f       	cpi	r24, 0xFF	; 255
+ 48e:	99 f4       	brne	.+38     	; 0x4b6 <__LOCK_REGION_LENGTH__+0xb6>
+					while (receivedBuffer[x] != dataVerify) {
+						dataVerify = AM29F016B_read_address_fast();
+						_delay_us(1);
+					}
+				}
+				address++;
+ 490:	9f ef       	ldi	r25, 0xFF	; 255
+ 492:	89 1a       	sub	r8, r25
+ 494:	99 0a       	sbc	r9, r25
+ 496:	a9 0a       	sbc	r10, r25
+ 498:	b9 0a       	sbc	r11, r25
+ 49a:	21 96       	adiw	r28, 0x01	; 1
+		}
+		else if (receivedChar == WRITE_64_BYTES) {
+			usart_read_bytes(64);
+			PORTD |= (1<<ACTIVITY_LED);
+			
+			for (uint8_t x = 0; x < 64; x++) {
+ 49c:	21 e0       	ldi	r18, 0x01	; 1
+ 49e:	c0 34       	cpi	r28, 0x40	; 64
+ 4a0:	d2 07       	cpc	r29, r18
+ 4a2:	99 f7       	brne	.-26     	; 0x48a <__LOCK_REGION_LENGTH__+0x8a>
+ 4a4:	20 e4       	ldi	r18, 0x40	; 64
+ 4a6:	c2 0e       	add	r12, r18
+ 4a8:	d1 1c       	adc	r13, r1
+ 4aa:	e1 1c       	adc	r14, r1
+ 4ac:	f1 1c       	adc	r15, r1
+					}
+				}
+				address++;
+			}
+			
+			USART_Transmit(SEND_ACK); // Send back ack
+ 4ae:	81 e3       	ldi	r24, 0x31	; 49
+ 4b0:	0e 94 49 00 	call	0x92	; 0x92 <USART_Transmit>
+ 4b4:	1b c0       	rjmp	.+54     	; 0x4ec <__LOCK_REGION_LENGTH__+0xec>
+			usart_read_bytes(64);
+			PORTD |= (1<<ACTIVITY_LED);
+			
+			for (uint8_t x = 0; x < 64; x++) {
+				if (receivedBuffer[x] != 0xFF) {
+					AM29F016B_set_data_outputs();
+ 4b6:	0e 94 cc 00 	call	0x198	; 0x198 <AM29F016B_set_data_outputs>
+					AM29F016B_flash_write_cycle_555();
+ 4ba:	0e 94 1a 01 	call	0x234	; 0x234 <AM29F016B_flash_write_cycle_555>
+					AM29F016B_write_address_with_data(address, receivedBuffer[x]);
+ 4be:	48 81       	ld	r20, Y
+ 4c0:	c5 01       	movw	r24, r10
+ 4c2:	b4 01       	movw	r22, r8
+ 4c4:	0e 94 f7 00 	call	0x1ee	; 0x1ee <AM29F016B_write_address_with_data>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 4c8:	8a e1       	ldi	r24, 0x1A	; 26
+ 4ca:	8a 95       	dec	r24
+ 4cc:	f1 f7       	brne	.-4      	; 0x4ca <__LOCK_REGION_LENGTH__+0xca>
+ 4ce:	00 c0       	rjmp	.+0      	; 0x4d0 <__LOCK_REGION_LENGTH__+0xd0>
+					_delay_us(5); // Wait byte program time
+					
+					// Verify data
+					AM29F016B_set_data_inputs();
+ 4d0:	0e 94 d4 00 	call	0x1a8	; 0x1a8 <AM29F016B_set_data_inputs>
+					uint8_t dataVerify = AM29F016B_read_address_fast();
+ 4d4:	0e 94 11 01 	call	0x222	; 0x222 <AM29F016B_read_address_fast>
+					while (receivedBuffer[x] != dataVerify) {
+ 4d8:	98 81       	ld	r25, Y
+ 4da:	89 17       	cp	r24, r25
+ 4dc:	c9 f2       	breq	.-78     	; 0x490 <__LOCK_REGION_LENGTH__+0x90>
+						dataVerify = AM29F016B_read_address_fast();
+ 4de:	0e 94 11 01 	call	0x222	; 0x222 <AM29F016B_read_address_fast>
+ 4e2:	95 e0       	ldi	r25, 0x05	; 5
+ 4e4:	9a 95       	dec	r25
+ 4e6:	f1 f7       	brne	.-4      	; 0x4e4 <__LOCK_REGION_LENGTH__+0xe4>
+ 4e8:	00 00       	nop
+ 4ea:	f6 cf       	rjmp	.-20     	; 0x4d8 <__LOCK_REGION_LENGTH__+0xd8>
+				}
+				address++;
+			}
+			
+			USART_Transmit(SEND_ACK); // Send back ack
+			PORTD &= ~(1<<ACTIVITY_LED);
+ 4ec:	5c 98       	cbi	0x0b, 4	; 11
+ 4ee:	48 cf       	rjmp	.-368    	; 0x380 <main+0xc>
+		}
+		
+		else if (receivedChar == WRITE_DATA) {
+ 4f0:	88 35       	cpi	r24, 0x58	; 88
+ 4f2:	e1 f4       	brne	.+56     	; 0x52c <__stack+0x2d>
+			usart_read_bytes(4);
+ 4f4:	84 e0       	ldi	r24, 0x04	; 4
+ 4f6:	90 e0       	ldi	r25, 0x00	; 0
+ 4f8:	0e 94 50 00 	call	0xa0	; 0xa0 <usart_read_bytes>
+			
+			uint32_t receivedAddress = (uint32_t) ((uint32_t) receivedBuffer[2] << 16) | ((uint32_t) receivedBuffer[1] << 8) | (uint32_t) receivedBuffer[0];
+ 4fc:	80 91 02 01 	lds	r24, 0x0102	; 0x800102 <_edata+0x2>
+ 500:	80 90 01 01 	lds	r8, 0x0101	; 0x800101 <_edata+0x1>
+ 504:	91 2c       	mov	r9, r1
+ 506:	a1 2c       	mov	r10, r1
+ 508:	b1 2c       	mov	r11, r1
+ 50a:	ba 2c       	mov	r11, r10
+ 50c:	a9 2c       	mov	r10, r9
+ 50e:	98 2c       	mov	r9, r8
+ 510:	88 24       	eor	r8, r8
+ 512:	a8 2a       	or	r10, r24
+ 514:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
+ 518:	88 2a       	or	r8, r24
+			
+			AM29F016B_set_data_outputs();
+ 51a:	0e 94 cc 00 	call	0x198	; 0x198 <AM29F016B_set_data_outputs>
+			AM29F016B_write_address_with_data(receivedAddress, receivedBuffer[3]);
+ 51e:	40 91 03 01 	lds	r20, 0x0103	; 0x800103 <_edata+0x3>
+ 522:	c5 01       	movw	r24, r10
+ 524:	b4 01       	movw	r22, r8
+ 526:	0e 94 f7 00 	call	0x1ee	; 0x1ee <AM29F016B_write_address_with_data>
+ 52a:	2a cf       	rjmp	.-428    	; 0x380 <main+0xc>
+		}
+		
+		// Send back the firmware version number
+		else if (receivedChar == READ_FIRMWARE_VERSION) {
+ 52c:	86 35       	cpi	r24, 0x56	; 86
+ 52e:	09 f0       	breq	.+2      	; 0x532 <__stack+0x33>
+ 530:	27 cf       	rjmp	.-434    	; 0x380 <main+0xc>
+			USART_Transmit(FIRMWARE_VERSION);
+ 532:	81 e0       	ldi	r24, 0x01	; 1
+ 534:	0e 94 49 00 	call	0x92	; 0x92 <USART_Transmit>
+ 538:	23 cf       	rjmp	.-442    	; 0x380 <main+0xc>
+
+0000053a <_exit>:
+ 53a:	f8 94       	cli
+
+0000053c <__stop_program>:
+ 53c:	ff cf       	rjmp	.-2      	; 0x53c <__stop_program>
