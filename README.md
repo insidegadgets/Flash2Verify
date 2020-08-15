@@ -8,6 +8,7 @@ Supported chips:
 * AM29F016B
 
 
+
 **Built (old PCB revision)**
 
 ![Built](https://github.com/insidegadgets/Flash2Verify/blob/master/Pictures/Flash2Verify_Built.jpg)
@@ -19,3 +20,7 @@ Supported chips:
 **PCB Option 2**
 
 ![PCB 2](https://github.com/insidegadgets/Flash2Verify/blob/master/Pictures/Flash2Verify_PCB_Option_2.png)
+
+**Software**
+
+![Software](https://github.com/insidegadgets/Flash2Verify/blob/master/Pictures/Flash2Verify_Software.png)
