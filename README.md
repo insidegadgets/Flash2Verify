@@ -5,8 +5,7 @@ to know the flash chip works before soldering it to a PCB.
 Licensed under GPL.
 
 Supported chips:
-
-AM29F016B
+* AM29F016B
 
 
 **Built (old PCB revision)**
